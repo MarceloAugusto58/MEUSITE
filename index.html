@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marcelo Augusto — Criação de Sites</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b10;
+  --bg-card: #0f1420;
+  --bg-card2: #131825;
+  --cyan: #00d4e8;
+  --cyan-dim: rgba(0,212,232,0.12);
+  --purple: #7c3aed;
+  --white: #eef2ff;
+  --muted: #7a8499;
+  --border: rgba(255,255,255,0.07);
+  --radius: 16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:18px 60px;background:rgba(8,11,16,0.75);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;text-decoration:none;color:var(--white);}
+.nav-logo span{color:var(--cyan);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;letter-spacing:.3px;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--white);}
+.nav-cta{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.18);color:var(--white);padding:10px 22px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;cursor:pointer;text-decoration:none;background:transparent;transition:border-color .2s,background .2s;}
+.nav-cta:hover{border-color:var(--cyan);background:rgba(0,212,232,0.05);}
+
+/* ── HAMBURGER (mobile) ── */
+.nav-hamburger{display:none;flex-direction:column;gap:5px;padding:6px;background:none;border:none;cursor:pointer;}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px;transition:all .3s;}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-mobile{position:fixed;top:65px;left:0;right:0;background:rgba(8,11,16,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 24px 24px;display:flex;flex-direction:column;gap:4px;transform:translateY(-110%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:199;}
+.nav-mobile.open{transform:translateY(0);}
+.nav-mobile a{display:block;padding:12px 16px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500;transition:color .2s,background .2s;}
+.nav-mobile a:hover{color:var(--white);background:rgba(255,255,255,.04);}
+.nav-mobile .nav-cta{margin-top:8px;justify-content:center;border-radius:8px;}
+
+/* ── AURORA ── */
+.aurora-wrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+.aurora-wrap::before{content:'';position:absolute;width:700px;height:700px;top:-100px;right:8%;background:radial-gradient(ellipse,rgba(0,200,220,.14) 0%,transparent 65%);animation:aurora-pulse 6s ease-in-out infinite;}
+.aurora-wrap::after{content:'';position:absolute;width:500px;height:600px;bottom:-80px;left:3%;background:radial-gradient(ellipse,rgba(100,40,200,.18) 0%,transparent 65%);animation:aurora-pulse 8s ease-in-out infinite reverse;}
+@keyframes aurora-pulse{0%,100%{opacity:.6;transform:scale(1);}50%{opacity:1;transform:scale(1.08);}}
+.beams{position:absolute;inset:0;display:flex;gap:0;}
+.beam{flex:1;background:linear-gradient(180deg,transparent 5%,rgba(0,212,232,.055) 40%,rgba(0,212,232,.03) 60%,transparent 95%);filter:blur(6px);animation:beam-flicker var(--d,4s) ease-in-out infinite var(--delay,0s);}
+@keyframes beam-flicker{0%,100%{opacity:.3;}50%{opacity:.9;}}
+
+/* ── SHARED ── */
+.pill{display:inline-block;border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:5px 18px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:22px;}
+h2.hl{font-family:'Barlow Condensed',sans-serif;font-size:68px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:22px;}
+h2.hl .cy{color:var(--cyan);}
+.body-p{font-size:16px;color:var(--muted);line-height:1.85;max-width:620px;}
+.btn-dark{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);color:var(--white);padding:15px 30px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:background .2s,border-color .2s;}
+.btn-dark:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.35);}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:15px;cursor:pointer;text-decoration:none;background:none;border:none;font-family:'Outfit',sans-serif;transition:color .2s;}
+.btn-ghost:hover{color:var(--white);}
+section.wrap{padding:100px 60px;max-width:1320px;margin:0 auto;}
+.centered{text-align:center;}
+.centered .body-p{margin:0 auto 48px;}
+
+/* ── HERO ── */
+#hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:80px 60px 60px;}
+#hero .aurora-wrap .beam:nth-child(1){--delay:0s;--d:3.5s;}
+#hero .aurora-wrap .beam:nth-child(2){--delay:.4s;--d:4.2s;}
+#hero .aurora-wrap .beam:nth-child(3){--delay:.8s;--d:3.8s;}
+#hero .aurora-wrap .beam:nth-child(4){--delay:1.1s;--d:5s;}
+#hero .aurora-wrap .beam:nth-child(5){--delay:.2s;--d:4.5s;}
+#hero .aurora-wrap .beam:nth-child(6){--delay:.6s;--d:3.2s;}
+#hero .aurora-wrap .beam:nth-child(7){--delay:1.4s;--d:4.8s;}
+#hero .aurora-wrap .beam:nth-child(8){--delay:.9s;--d:3.6s;}
+#hero .aurora-wrap .beam:nth-child(9){--delay:.3s;--d:5.2s;}
+#hero .aurora-wrap .beam:nth-child(10){--delay:1.7s;--d:4.1s;}
+.hero-content{position:relative;z-index:1;max-width:960px;}
+.hero-content h1{font-family:'Barlow Condensed',sans-serif;font-size:96px;font-weight:900;text-transform:uppercase;line-height:.97;margin-bottom:30px;}
+.hero-content h1 .cy{color:var(--cyan);}
+.hero-content .body-p{margin:0 auto 44px;font-size:17px;}
+.hero-actions{display:flex;align-items:center;justify-content:center;gap:28px;}
+
+/* ── PORTFOLIO ── */
+.projects-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:48px;}
+.browser{background:#0d1220;border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .25s,transform .25s;}
+.browser:hover{border-color:rgba(0,212,232,.2);transform:translateY(-4px);}
+.browser-bar{display:flex;align-items:center;gap:6px;padding:12px 14px;border-bottom:1px solid var(--border);}
+.dot{width:10px;height:10px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.browser-screen{height:220px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-family:monospace;font-size:12px;color:rgba(255,255,255,.2);}
+.browser-screen::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 12px,rgba(255,255,255,.018) 12px,rgba(255,255,255,.018) 24px);}
+.browser-screen span{position:relative;z-index:1;}
+.browser-screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block;cursor:pointer;}
+.browser-screen .play-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:opacity .2s;}
+.browser-screen .play-hint svg{width:44px;height:44px;opacity:.55;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6));transition:opacity .2s;}
+.browser:hover .play-hint,.browser.vid-active .play-hint{opacity:0;}
+.browser-foot{padding:14px 16px;border-top:1px solid var(--border);}
+.browser-foot h4{font-size:14px;font-weight:600;margin-bottom:3px;}
+.browser-foot p{font-size:12px;color:var(--muted);}
+.browser-screen.s1{background:linear-gradient(135deg,#0d0f20,#1a0c2e);}
+.browser-screen.s2{background:linear-gradient(135deg,#0f1a12,#0d1a0f);}
+.browser-screen.s3{background:linear-gradient(135deg,#1a100d,#200f0d);}
+.browser-screen.s4{background:linear-gradient(135deg,#0d1520,#101828);}
+
+/* ── ABORDAGEM ── */
+.approach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;}
+.approach-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;text-align:center;transition:border-color .25s,transform .25s;}
+.approach-card:hover{border-color:rgba(0,212,232,.25);transform:translateY(-4px);}
+.approach-icon{width:52px;height:52px;display:block;margin:0 auto 20px;object-fit:contain;}
+.approach-card h3{font-size:18px;font-weight:700;margin-bottom:10px;}
+.approach-card p{font-size:14px;color:var(--muted);line-height:1.75;}
+
+/* ── DIFERENCIAIS ── */
+.diff-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;margin-top:48px;}
+.diff-stack{display:flex;flex-direction:column;gap:10px;}
+.diff-card{border-radius:12px;padding:18px 22px;cursor:pointer;display:flex;align-items:flex-start;gap:16px;transition:opacity .2s,transform .15s;}
+.diff-card:hover{transform:translateX(4px);}
+.diff-card.inactive{opacity:.55;}
+.diff-card .num{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:900;line-height:1;min-width:30px;}
+.diff-card h3{font-size:15px;font-weight:700;margin-bottom:3px;}
+.diff-card p{font-size:13px;opacity:.75;}
+.diff-card.c1{background:#3ecf4c;color:#000;}
+.diff-card.c2{background:#e8b940;color:#000;}
+.diff-card.c3{background:#e87040;color:#000;}
+.diff-card.c4{background:#9b5cf6;color:#fff;}
+.diff-detail{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:40px;min-height:340px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;transition:all .3s;}
+.diff-detail::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,180,200,.05) 0%,rgba(100,50,200,.08) 100%);pointer-events:none;}
+.diff-detail .tag{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:12px;}
+.diff-detail h3{font-size:22px;font-weight:700;margin-bottom:14px;}
+.diff-detail p{font-size:14px;color:var(--muted);line-height:1.8;}
+
+/* ── STATS ── */
+.stats-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.checklist{display:flex;flex-direction:column;gap:14px;margin-top:28px;}
+.check-item{display:flex;align-items:center;gap:12px;font-size:15px;color:var(--muted);}
+.check-circle{width:22px;height:22px;border-radius:50%;background:rgba(0,212,232,.1);border:1px solid var(--cyan);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--cyan);font-size:12px;}
+.stat-cards{display:flex;flex-direction:column;gap:14px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:900;line-height:1;margin-bottom:4px;}
+.stat-num.cy{color:var(--cyan);}
+.stat-num.pu{color:#a78bfa;}
+.stat-num.gr{color:#4ade80;}
+.stat-desc{font-size:13px;color:var(--muted);}
+
+/* ── TESTIMONIALS ── */
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;}
+.test-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:30px;}
+.stars{color:#f59e0b;font-size:16px;letter-spacing:2px;margin-bottom:12px;}
+.quote{font-size:44px;color:rgba(255,255,255,.12);line-height:.5;font-family:Georgia,serif;margin-bottom:16px;}
+.test-text{font-size:14px;color:var(--muted);line-height:1.85;margin-bottom:22px;}
+.author{display:flex;align-items:center;gap:12px;}
+.avatar{width:38px;height:38px;border-radius:50%;background:rgba(0,212,232,.15);border:1px solid rgba(0,212,232,.35);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--cyan);flex-shrink:0;}
+.author-name{font-size:14px;font-weight:600;}
+.author-role{font-size:12px;color:var(--muted);}
+
+/* ── FAQ ── */
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:48px;}
+.faq-item{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;cursor:pointer;font-size:15px;font-weight:600;gap:14px;user-select:none;transition:color .2s;}
+.faq-q:hover{color:var(--cyan);}
+.faq-icon{width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:var(--muted);transition:border-color .2s,transform .3s,color .2s;}
+.faq-item.open .faq-icon{border-color:var(--cyan);color:var(--cyan);transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+.faq-a-inner{padding:0 22px 18px;font-size:14px;color:var(--muted);line-height:1.8;border-top:1px solid var(--border);padding-top:14px;}
+.faq-item.open .faq-a{max-height:180px;}
+
+/* ── CONTACT ── */
+#contact{position:relative;overflow:hidden;padding:0;}
+.contact-inner{max-width:1320px;margin:0 auto;padding:100px 60px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;position:relative;z-index:1;}
+.form-box{background:rgba(15,20,32,.85);border:1px solid var(--border);border-radius:20px;padding:38px;backdrop-filter:blur(10px);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.fi,.fs,.ft{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:15px 18px;color:var(--white);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color .2s;width:100%;}
+.fi::placeholder,.ft::placeholder{color:var(--muted);}
+.fi:focus,.fs:focus,.ft:focus{border-color:rgba(0,212,232,.4);}
+.fs{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8499' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;}
+.fs option{background:#0f1420;}
+.ft{resize:none;height:110px;margin-bottom:10px;}
+.btn-send{width:100%;padding:17px;background:linear-gradient(90deg,rgba(0,180,210,.35) 0%,rgba(110,45,210,.35) 100%);border:1px solid rgba(0,212,232,.25);border-radius:10px;color:var(--white);font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+.btn-send:hover{background:linear-gradient(90deg,rgba(0,180,210,.55) 0%,rgba(110,45,210,.55) 100%);}
+.wa-btn{display:inline-flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);color:var(--white);padding:15px 28px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;text-decoration:none;margin-top:20px;transition:background .2s,border-color .2s;}
+.wa-btn:hover{background:rgba(37,211,102,.1);border-color:rgba(37,211,102,.4);}
+
+/* ── FOOTER ── */
+.footer-wrap{border-top:1px solid var(--border);padding:60px;max-width:1320px;margin:0 auto;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:60px;}
+.footer-brand h3{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;letter-spacing:1px;margin-bottom:4px;}
+.footer-brand h3 span{color:var(--cyan);}
+.footer-brand .ft-sub{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.85;margin-bottom:18px;}
+.socials{display:flex;gap:10px;}
+.soc{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);cursor:pointer;text-decoration:none;transition:border-color .2s,color .2s;}
+.soc:hover{border-color:var(--cyan);color:var(--cyan);}
+.footer-col h4{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--white);margin-bottom:18px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.footer-col a{font-size:14px;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .2s;}
+.footer-col a::before{content:'·';color:rgba(122,132,153,.4);}
+.footer-col a:hover{color:var(--white);}
+.footer-bottom{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.footer-bottom p{font-size:12px;color:rgba(122,132,153,.45);}
+.footer-bottom-links{display:flex;gap:24px;}
+.footer-bottom-links a{font-size:11px;color:rgba(122,132,153,.45);text-decoration:none;letter-spacing:1px;text-transform:uppercase;transition:color .2s;}
+.footer-bottom-links a:hover{color:var(--muted);}
+
+/* ── RESPONSIVO ── */
+@media(max-width:900px){
+  nav{padding:16px 24px;}
+  .nav-links,.nav-cta{display:none;}
+  .nav-hamburger{display:flex;}
+  #hero{padding:100px 24px 60px;}
+  .hero-content h1{font-size:56px;}
+  h2.hl{font-size:44px;}
+  section.wrap{padding:60px 24px;}
+  .projects-grid,.sobre-layout,.diff-layout,.stats-layout,.test-grid{grid-template-columns:1fr;}
+  .approach-grid{grid-template-columns:1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .contact-inner{padding:60px 24px;grid-template-columns:1fr;}
+  .footer-wrap{padding:40px 24px;}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px;}
+  .footer-bottom{flex-direction:column;gap:10px;align-items:flex-start;}
+}
+@media(max-width:480px){
+  .hero-content h1{font-size:42px;}
+  h2.hl{font-size:36px;}
+  .sobre-content h2.hl{font-size:34px;}
+  .hero-actions{flex-direction:column;align-items:stretch;}
+  .hero-actions a{justify-content:center;}
+  .form-row{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="mainNav">
+  <a href="#hero" class="nav-logo">MARCELO <span>AUGUSTO</span></a>
+  <ul class="nav-links">
+    <li><a href="#portfolio">Portfólio</a></li>
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#depoimentos">Resultados</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Falar comigo →</a>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Menu mobile -->
+<div class="nav-mobile" id="navMobile">
+  <a href="#portfolio">Portfólio</a>
+  <a href="#servicos">Serviços</a>
+  <a href="#depoimentos">Resultados</a>
+  <a href="#faq">FAQ</a>
+  <a href="#contact" class="nav-cta">Falar comigo →</a>
+</div>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <svg style="position:absolute;width:0;height:0;overflow:hidden;">
+    <defs>
+      <filter id="ef-hero">
+        <feTurbulence result="undulation" numOctaves="2" baseFrequency="0.0005,0.002" seed="0" type="turbulence"></feTurbulence>
+        <feColorMatrix id="ef-hero-hue" in="undulation" type="hueRotate" values="180"></feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix" values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"></feColorMatrix>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100" result="dist"></feDisplacementMap>
+        <feDisplacementMap in="dist" in2="undulation" scale="100" result="output"></feDisplacementMap>
+      </filter>
+    </defs>
+  </svg>
+  <div class="aurora-wrap">
+    <div class="beams">
+      <div class="beam"></div><div class="beam"></div><div class="beam"></div>
+      <div class="beam"></div><div class="beam"></div><div class="beam"></div>
+      <div class="beam"></div><div class="beam"></div><div class="beam"></div>
+      <div class="beam"></div>
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="pill">Desenvolvedor Web · Sites que Vendem</div>
+    <h1>SEU SITE DEVERIA<br>ESTAR TRABALHANDO<br><span class="cy">POR VOCÊ 24H.</span></h1>
+    <p class="body-p">A maioria dos negócios não tem site — tem uma página bonita que não aparece no Google, não convence ninguém e não vende nada. Eu faço diferente: sites do zero, feitos para o seu público, seu produto e sua meta.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-dark">Quero meu site agora →</a>
+      <a href="#portfolio" class="btn-ghost">Ver projetos realizados ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── PORTFOLIO ── -->
+<section class="wrap centered" id="portfolio">
+  <div class="pill">Projetos Reais</div>
+  <h2 class="hl">SITES QUE REPRESENTAM.<br><span class="cy">CLIENTES QUE CRESCEM.</span></h2>
+  <p class="body-p">Cada projeto começa do zero — sem template, sem atalho. Do briefing ao ar, com estratégia, código limpo e foco em resultado.</p>
+  <div class="projects-grid">
+    <div class="browser">
+      <div class="browser-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+      <div class="browser-screen s1">
+        <video src="Videos/Video%20Site%20Advogado.mp4" muted loop playsinline preload="metadata"></video>
+        <div class="play-hint"><svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="browser-foot">
+        <h4>Escritório de Advocacia</h4>
+        <p>Site institucional · Áreas de atuação · Consulta online</p>
+      </div>
+    </div>
+    <div class="browser">
+      <div class="browser-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+      <div class="browser-screen s2">
+        <video src="Videos/Video%20Site%20meu%20portifolio.mp4" muted loop playsinline preload="metadata"></video>
+        <div class="play-hint"><svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="browser-foot">
+        <h4>Portfólio — Marcelo Augusto</h4>
+        <p>Site pessoal · Desenvolvedor Web · Design moderno</p>
+      </div>
+    </div>
+    <div class="browser">
+      <div class="browser-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+      <div class="browser-screen s3">
+        <video src="Videos/Video%20Site%20Grizi.mp4" muted loop playsinline preload="metadata"></video>
+        <div class="play-hint"><svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="browser-foot">
+        <h4>Massoterapeuta Grizi</h4>
+        <p>Site de serviços · Agendamento online · Tratamentos</p>
+      </div>
+    </div>
+    <div class="browser">
+      <div class="browser-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+      <div class="browser-screen s4">
+        <video src="Videos/Video%20Site%20Gold.mp4" muted loop playsinline preload="metadata"></video>
+        <div class="play-hint"><svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="browser-foot">
+        <h4>Gold Transportes</h4>
+        <p>Site institucional · Serviços de transporte · Cotação online</p>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:40px;">
+    <a href="#contact" class="btn-dark">Quero um site assim →</a>
+  </div>
+</section>
+
+<!-- ── ABORDAGEM ── -->
+<section class="wrap centered" id="servicos" style="background:rgba(255,255,255,.01);">
+  <div class="pill">Minha Abordagem</div>
+  <h2 class="hl">NÃO ENTREGO SÓ UM SITE BONITO.<br><span class="cy">ENTREGO UMA MÁQUINA DE RESULTADOS.</span></h2>
+  <p class="body-p">Cada projeto nasce de uma estratégia: quem é o seu cliente, o que ele precisa ver e qual ação você quer que ele tome.</p>
+  <div class="approach-grid">
+    <div class="approach-card">
+      <img class="approach-icon" src="fone.png" alt="Escuta">
+      <h3>Primeiro, eu te escuto</h3>
+      <p>Uma conversa sem pressa para entender o seu negócio, seus objetivos e o que você quer que seu site faça por você.</p>
+    </div>
+    <div class="approach-card">
+      <img class="approach-icon" src="alvo.png" alt="Estratégia">
+      <h3>Depois, criamos a estratégia</h3>
+      <p>Com base na sua necessidade, defino a estrutura, o conteúdo e o caminho que vai gerar mais resultado para o seu caso.</p>
+    </div>
+    <div class="approach-card">
+      <img class="approach-icon" src="foguete.png" alt="Entrega">
+      <h3>E entrego pronto para vender</h3>
+      <p>Site no ar, rápido, responsivo e preparado para aparecer no Google — criado do zero, do jeito que o seu negócio precisa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── DIFERENCIAIS ── -->
+<section class="wrap" id="diferenciais" style="border-top:1px solid var(--border);">
+  <div class="pill">Site bom vai além do design</div>
+  <h2 class="hl">NÃO SÓ BONITO.<br><span class="cy">ESTRATÉGICO.</span></h2>
+  <p class="body-p" style="margin-bottom:0">Cada pilar por trás do meu trabalho — clique para entender o que está por trás.</p>
+  <div class="diff-layout">
+    <div class="diff-stack" id="diffStack">
+      <div class="diff-card c1" data-idx="0">
+        <div class="num">1</div>
+        <div><h3>Personalização Total</h3><p>Nenhum template. Criado do zero para o seu negócio.</p></div>
+      </div>
+      <div class="diff-card c2 inactive" data-idx="1">
+        <div class="num">2</div>
+        <div><h3>Estrutura SEO desde o Início</h3><p>Código e conteúdo já preparados para o Google.</p></div>
+      </div>
+      <div class="diff-card c3 inactive" data-idx="2">
+        <div class="num">3</div>
+        <div><h3>Performance Ultrarrápida</h3><p>Sites rápidos retêm visitantes. Sites lentos perdem clientes.</p></div>
+      </div>
+      <div class="diff-card c4 inactive" data-idx="3">
+        <div class="num">4</div>
+        <div><h3>CTA Estratégico em Cada Seção</h3><p>Cada botão guia o visitante à ação certa.</p></div>
+      </div>
+    </div>
+    <div class="diff-detail" id="diffDetail">
+      <div class="tag" id="diffTag">PERSONALIZAÇÃO</div>
+      <h3 id="diffTitle">Seu site é único porque o seu negócio é único.</h3>
+      <p id="diffText">Trabalho com template zero. Cada site começa do rascunho: identidade visual, tom de voz, estrutura de navegação e conteúdo, tudo pensado para o seu mercado e para o cliente que você quer atrair. O resultado é um site que parece feito por uma grande agência, mas com o cuidado de quem entende o seu negócio de perto.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<section class="wrap" style="background:rgba(255,255,255,.01);border-top:1px solid var(--border);">
+  <div class="pill">Presença digital é urgente</div>
+  <div class="stats-layout">
+    <div>
+      <h2 class="hl">ENQUANTO VOCÊ ADIA,<br>O CONCORRENTE<br><span class="cy">ESTÁ SENDO ENCONTRADO.</span></h2>
+      <p class="body-p">Mais de 97% das pessoas pesquisam no Google antes de comprar. Se você não aparece online, você simplesmente não existe para esses clientes.</p>
+      <div class="checklist">
+        <div class="check-item"><div class="check-circle">✓</div><span>Seu site trabalha por você 24h por dia, 7 dias por semana</span></div>
+        <div class="check-item"><div class="check-circle">✓</div><span>Gera credibilidade antes mesmo do primeiro contato</span></div>
+        <div class="check-item"><div class="check-circle">✓</div><span>Transforma visitante em cliente mesmo enquanto você dorme</span></div>
+      </div>
+      <div style="margin-top:32px;">
+        <a href="#contact" class="btn-dark">Quero meu site agora →</a>
+      </div>
+    </div>
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="stat-num cy">97%</div>
+        <div class="stat-desc">das pessoas pesquisam no Google antes de comprar</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num pu">3s</div>
+        <div class="stat-desc">é o tempo máximo que um visitante espera um site carregar antes de ir embora</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num gr">24h</div>
+        <div class="stat-desc">por dia seu site trabalha para você, mesmo quando você não está disponível</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DEPOIMENTOS ── -->
+<section class="wrap centered" id="depoimentos" style="border-top:1px solid var(--border);">
+  <div class="pill">Quem já passou por aqui</div>
+  <h2 class="hl">RESULTADOS <span class="cy">QUE FALAM POR SI.</span></h2>
+  <div class="test-grid">
+    <div class="test-card">
+      <div class="stars">★★★★★</div>
+      <div class="quote">"</div>
+      <p class="test-text">Meu escritório não tinha presença digital nenhuma. O Marcelo Augusto criou um site que transmite autoridade e já na primeira semana comecei a receber consultas pelo formulário. Hoje o Google é minha principal fonte de clientes novos.</p>
+      <div class="author">
+        <div class="avatar">R</div>
+        <div>
+          <div class="author-name">Dr. Rafael — Advocacia</div>
+          <div class="author-role">Direito Civil e Trabalhista</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-card">
+      <div class="stars">★★★★★</div>
+      <div class="quote">"</div>
+      <p class="test-text">O Marcelo Augusto entendeu tudo que eu precisava sem eu saber explicar direito. O resultado ficou muito acima do esperado — o site transmite exatamente a leveza e o cuidado que ofereço nos meus atendimentos.</p>
+      <div class="author">
+        <div class="avatar">G</div>
+        <div>
+          <div class="author-name">Grizi — Massoterapia</div>
+          <div class="author-role">Massoterapeuta</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-card">
+      <div class="stars">★★★★★</div>
+      <div class="quote">"</div>
+      <p class="test-text">Precisávamos de um site que passasse credibilidade para nossos clientes empresariais. O Marcelo Augusto entregou no prazo, com qualidade impecável e ainda nos orientou em tudo. Vale cada centavo.</p>
+      <div class="author">
+        <div class="avatar">G</div>
+        <div>
+          <div class="author-name">Gold Transportes</div>
+          <div class="author-role">Transportadora</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="wrap centered" id="faq" style="border-top:1px solid var(--border);">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:80px;font-weight:900;background:linear-gradient(135deg,#7b6cf6,#00d4e8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;">FAQ</div>
+  <p style="font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:0;">Dúvidas Frequentes</p>
+  <div class="faq-grid" id="faqList">
+    <div class="faq-item">
+      <div class="faq-q">Qual o prazo de entrega de um site?<div class="faq-icon">+</div></div>
+      <div class="faq-a"><div class="faq-a-inner">O prazo varia conforme a complexidade do projeto, mas landing pages simples saem em 7 a 14 dias. Sites institucionais completos costumam levar de 3 a 5 semanas. Tudo acordado antes de começar.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">O que é SEO e por que meu site precisa disso?<div class="faq-icon">+</div></div>
+      <div class="faq-a"><div class="faq-a-inner">SEO é o conjunto de técnicas que faz seu site aparecer nas primeiras posições do Google gratuitamente. Diferente dos anúncios, o SEO trabalha para você todos os dias sem custo por clique.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Preciso ter domínio e hospedagem antes de contratar?<div class="faq-icon">+</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Não. Posso cuidar de tudo isso por você. Se você já tiver domínio e hospedagem, ótimo — usamos o que você tem. Se não, indico as melhores opções para o seu caso.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Qual a diferença entre SEO e Google Ads?<div class="faq-icon">+</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Google Ads você paga por clique e para quando para de pagar. O SEO é um ativo: demora um pouco mais para aparecer, mas quando começa a funcionar, trabalha de graça para sempre.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Posso mexer no meu site depois que ele ficar pronto?<div class="faq-icon">+</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim. Entrego o site com treinamento básico para que você consiga fazer alterações simples de texto e imagem. Para mudanças maiores, ofereço suporte mensal.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Quanto custa um site?<div class="faq-icon">+</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Cada projeto é orçado individualmente. O valor depende do escopo, das funcionalidades e do prazo. Entre em contato — faço um orçamento sem compromisso dentro de 24h.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Vocês fazem site para qualquer tipo de negócio?<div class="faq-icon">+</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim, mas me especializo em negócios locais, profissionais liberais, infoprodutores e pequenas empresas que precisam de presença digital estratégica e resultados reais.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Vocês oferecem suporte após a entrega?<div class="faq-icon">+</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim. Ofereço 30 dias de suporte incluso após a entrega e planos mensais de manutenção e atualização para quem quiser continuar com acompanhamento.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<div id="contact" style="border-top:1px solid var(--border);position:relative;overflow:hidden;">
+  <svg style="position:absolute;width:0;height:0;overflow:hidden;">
+    <defs>
+      <filter id="ef-contact">
+        <feTurbulence result="undulation" numOctaves="2" baseFrequency="0.0005,0.002" seed="7" type="turbulence"></feTurbulence>
+        <feColorMatrix id="ef-contact-hue" in="undulation" type="hueRotate" values="0"></feColorMatrix>
+        <feColorMatrix in="dist" result="circulation" type="matrix" values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"></feColorMatrix>
+        <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100" result="dist"></feDisplacementMap>
+        <feDisplacementMap in="dist" in2="undulation" scale="100" result="output"></feDisplacementMap>
+      </filter>
+    </defs>
+  </svg>
+  <div class="contact-inner">
+    <div>
+      <div class="pill">Vamos começar?</div>
+      <h2 class="hl" style="font-size:72px;">CONTA PRA MIM O<br>SEU PROJETO. <span class="cy">EU<br>CUIDO DO RESTO.</span></h2>
+      <p class="body-p">Respondo em até 24 horas. Sem enrolação, sem proposta genérica — apenas uma conversa honesta sobre o que faz sentido para o seu negócio.</p>
+      <!-- SUBSTITUA o número pelo seu: 55 + DDD + número -->
+      <a href="https://wa.me/5511999999999" class="wa-btn" id="waBtn" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"></path><path d="M12 0C5.374 0 0 5.373 0 12c0 2.117.554 4.107 1.523 5.832L.057 23.999l6.306-1.654A11.954 11.954 0 0012 24c6.626 0 12-5.374 12-12S18.626 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.369l-.359-.214-3.722.976.992-3.623-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"></path></svg>
+        Falar pelo WhatsApp
+      </a>
+    </div>
+    <div class="form-box">
+      <form id="contactForm" novalidate>
+        <div class="form-row">
+          <input class="fi" id="fNome" type="text" placeholder="Nome" required>
+          <input class="fi" id="fWhats" type="tel" placeholder="WhatsApp">
+        </div>
+        <div class="form-row">
+          <select class="fs" id="fServico">
+            <option value="" disabled selected>Selecione o serviço</option>
+            <option>Criação de Site</option>
+            <option>Landing Page</option>
+            <option>SEO &amp; GEO</option>
+            <option>Redesign</option>
+          </select>
+          <select class="fs" id="fOrcamento">
+            <option value="" disabled selected>Orçamento estimado</option>
+            <option>Até R$ 2.000</option>
+            <option>R$ 2.000 – R$ 5.000</option>
+            <option>R$ 5.000 – R$ 10.000</option>
+            <option>Acima de R$ 10.000</option>
+          </select>
+        </div>
+        <textarea class="ft" id="fMsg" placeholder="Descreva em poucas palavras a sua necessidade..."></textarea>
+        <button type="submit" class="btn-send" id="btnSend">Enviar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MARCELO <span>AUGUSTO</span></h3>
+        <div class="ft-sub">Criação de Sites · SEO · Performance</div>
+        <p>Sites personalizados, SEO e estratégia digital para negócios que querem crescer online de verdade — sem intermediários, sem template, sem enrolação.</p>
+        <div class="socials">
+          <!-- SUBSTITUA os hrefs pelos seus links reais -->
+          <a class="soc" href="https://wa.me/5511999999999" target="_blank" rel="noopener" title="WhatsApp">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.374 0 0 5.373 0 12c0 2.117.554 4.107 1.523 5.832L.057 23.999l6.306-1.654A11.954 11.954 0 0012 24c6.626 0 12-5.374 12-12S18.626 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.369l-.359-.214-3.722.976.992-3.623-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"></path></svg>
+          </a>
+          <a class="soc" href="https://instagram.com/seuinstagram" target="_blank" rel="noopener" title="Instagram">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"></circle></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Páginas</h4>
+        <ul>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#portfolio">Portfólio</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#contact">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Serviços</h4>
+        <ul>
+          <li><a href="#servicos">Criação de Sites</a></li>
+          <li><a href="#servicos">SEO &amp; GEO</a></li>
+          <li><a href="#servicos">Landing Pages</a></li>
+          <li><a href="#servicos">Performance</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contato</h4>
+        <ul>
+          <li><a href="https://wa.me/5567992035301" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="https://instagram.com/marcelo.sites" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="mailto:marceloaugustocapassocosta@gmail.com">E-mail</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Marcelo Augusto. Todos os direitos reservados.</p>
+      <div class="footer-bottom-links">
+        <a href="#hero">Site</a>
+        <a href="#servicos">SEO</a>
+        <a href="#contact">Contato</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── NÚMERO WHATSAPP — altere aqui ──
+  const WA_NUMBER = '5567992035301'; // ex: 5511987654321
+
+  // ── NAV: hamburger mobile ──
+  const hamburger = document.getElementById('hamburger');
+  const navMobile = document.getElementById('navMobile');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    navMobile.classList.toggle('open');
+    document.body.style.overflow = navMobile.classList.contains('open') ? 'hidden' : '';
+  });
+  navMobile.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      navMobile.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // ── NAV: highlight de seção ativa ──
+  const sections = document.querySelectorAll('section[id], div[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sectionObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id);
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => sectionObserver.observe(s));
+
+  // ── FAQ: accordion ──
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // ── DIFERENCIAIS: cards interativos ──
+  const diffData = [
+    { tag: 'PERSONALIZAÇÃO', title: 'Seu site é único porque o seu negócio é único.', text: 'Trabalho com template zero. Cada site começa do rascunho: identidade visual, tom de voz, estrutura de navegação e conteúdo, tudo pensado para o seu mercado e para o cliente que você quer atrair. O resultado é um site que parece feito por uma grande agência, mas com o cuidado de quem entende o seu negócio de perto.' },
+    { tag: 'SEO', title: 'Apareça no Google antes mesmo de pagar por anúncios.', text: 'Código limpo, URLs amigáveis, meta tags otimizadas, velocidade de carregamento e estrutura de conteúdo que o Google ama. Cada página é construída para ranquear, não só para existir.' },
+    { tag: 'PERFORMANCE', title: 'Cada segundo a mais de carregamento custa clientes.', text: 'Sites lentos perdem visitantes. Trabalho com lazy loading, minificação, CDN e otimização de imagens para garantir que o seu site carregue em menos de 2 segundos — em qualquer dispositivo.' },
+    { tag: 'CONVERSÃO', title: 'Cada botão tem um propósito. Cada seção tem uma função.', text: 'CTA no lugar certo, hierarquia visual que guia o olhar, copy que convence e fluxo de leitura que empurra o visitante até o contato. Design que vende — não que apenas impressiona.' }
+  ];
+  function selectDiff(idx) {
+    document.querySelectorAll('.diff-card').forEach((c, i) => {
+      c.classList.toggle('inactive', i !== idx);
+    });
+    const d = diffData[idx];
+    document.getElementById('diffTag').textContent = d.tag;
+    document.getElementById('diffTitle').textContent = d.title;
+    document.getElementById('diffText').textContent = d.text;
+  }
+  document.querySelectorAll('.diff-card').forEach(card => {
+    card.addEventListener('click', () => selectDiff(Number(card.dataset.idx)));
+  });
+
+  // ── FORMULÁRIO: envio via WhatsApp ──
+  document.getElementById('contactForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const nome     = document.getElementById('fNome').value.trim();
+    const whats    = document.getElementById('fWhats').value.trim();
+    const servico  = document.getElementById('fServico').value;
+    const orcamento= document.getElementById('fOrcamento').value;
+    const msg      = document.getElementById('fMsg').value.trim();
+
+    if (!nome) { document.getElementById('fNome').focus(); return; }
+
+    const texto = [
+      `Olá, Marcelo! 👋`,
+      ``,
+      `*Nome:* ${nome}`,
+      whats    ? `*WhatsApp:* ${whats}` : '',
+      servico  ? `*Serviço:* ${servico}` : '',
+      orcamento? `*Orçamento:* ${orcamento}` : '',
+      msg      ? `*Mensagem:* ${msg}` : ''
+    ].filter(Boolean).join('\n');
+
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(texto)}`, '_blank');
+
+    const btn = document.getElementById('btnSend');
+    btn.textContent = 'Enviado! Até 24h ✓';
+    btn.style.background = 'rgba(74,222,128,.2)';
+    btn.style.borderColor = 'rgba(74,222,128,.4)';
+    setTimeout(() => {
+      btn.textContent = 'Enviar';
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      document.getElementById('contactForm').reset();
+    }, 4000);
+  });
+
+  // Botão WhatsApp direto — atualiza href dinamicamente
+  document.getElementById('waBtn').href = `https://wa.me/${WA_NUMBER}`;
+
+  // ── PORTFOLIO: vídeos pausados, tocam no hover (desktop) ou clique (mobile) ──
+  (function () {
+    const isTouch = () => window.matchMedia('(hover: none)').matches;
+
+    document.querySelectorAll('.browser-screen video').forEach(video => {
+      const wrap = video.closest('.browser');
+
+      const play = () => { video.play(); wrap.classList.add('vid-active'); };
+      const pause = () => { video.pause(); video.currentTime = 0; wrap.classList.remove('vid-active'); };
+
+      // Desktop: hover
+      wrap.addEventListener('mouseenter', () => { if (!isTouch()) play(); });
+      wrap.addEventListener('mouseleave', () => { if (!isTouch()) pause(); });
+
+      // Mobile: clique
+      wrap.addEventListener('click', () => {
+        if (!isTouch()) return;
+        wrap.classList.contains('vid-active') ? pause() : play();
+      });
+    });
+  })();
+
+  // ── ANIMAÇÃO: Etheral Shadow ──
+  (function () {
+    const heroHue    = document.getElementById('ef-hero-hue');
+    const contactHue = document.getElementById('ef-contact-hue');
+    let h = 0, ch = 180;
+    function tick() {
+      h  = (h  + 0.8) % 360;
+      ch = (ch + 0.8) % 360;
+      if (heroHue)    heroHue.setAttribute('values', h.toFixed(1));
+      if (contactHue) contactHue.setAttribute('values', ch.toFixed(1));
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  })();
+</script>
+</body>
+</html>
