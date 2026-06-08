@@ -764,15 +764,42 @@ section.wrap{padding:100px 60px;max-width:1320px;margin:0 auto;}
   // Botão WhatsApp direto — atualiza href dinamicamente
   document.getElementById('waBtn').href = `https://wa.me/${WA_NUMBER}`;
 
-  // ── PORTFOLIO: vídeos pausados, tocam no hover (desktop) ou clique (mobile) ──
+  // ── PORTFOLIO: primeiro frame sempre visível, toca no hover/clique ──
   (function () {
     const isTouch = () => window.matchMedia('(hover: none)').matches;
 
     document.querySelectorAll('.browser-screen video').forEach(video => {
       const wrap = video.closest('.browser');
 
-      const play = () => { video.play(); wrap.classList.add('vid-active'); };
-      const pause = () => { video.pause(); video.currentTime = 0; wrap.classList.remove('vid-active'); };
+      // Força o primeiro frame a aparecer (funciona em iOS/Android com vídeo mutado)
+      const showFrame = () => {
+        video.play().then(() => {
+          video.pause();
+          video.currentTime = 0;
+        }).catch(() => {
+          video.currentTime = 0.01; // fallback
+        });
+      };
+
+      const play = () => {
+        video.currentTime = 0;
+        video.play();
+        wrap.classList.add('vid-active');
+      };
+
+      const pause = () => {
+        video.pause();
+        wrap.classList.remove('vid-active');
+        showFrame();
+      };
+
+      // Carrega o primeiro frame quando o card entra na tela
+      const io = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        io.unobserve(wrap);
+        showFrame();
+      }, { threshold: 0.1 });
+      io.observe(wrap);
 
       // Desktop: hover
       wrap.addEventListener('mouseenter', () => { if (!isTouch()) play(); });
