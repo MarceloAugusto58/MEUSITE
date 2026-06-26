@@ -316,6 +316,7 @@ section.wrap{padding:100px 60px;max-width:1320px;margin:0 auto;}
 
 <!-- ── HERO ── -->
 <section id="hero">
+  <canvas id="hero-shader" style="position:absolute;inset:0;width:100%;height:100%;z-index:-1;display:block;"></canvas>
   <svg style="position:absolute;width:0;height:0;overflow:hidden;">
     <defs>
       <filter id="ef-hero">
@@ -873,6 +874,88 @@ section.wrap{padding:100px 60px;max-width:1320px;margin:0 auto;}
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
+  })();
+
+  // ── HERO SHADER BACKGROUND (WebGL2) ──
+  (function () {
+    const canvas = document.getElementById('hero-shader');
+    if (!canvas) return;
+    const gl = canvas.getContext('webgl2', { premultipliedAlpha: false });
+    if (!gl) return;
+
+    const VERT = `#version 300 es
+precision highp float;
+layout(location=0) in vec2 a_pos;
+out vec2 v_uv;
+void main(){ v_uv=a_pos*.5+.5; gl_Position=vec4(a_pos,0.,1.); }`;
+
+    const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+in vec2 v_uv;
+uniform vec3 iResolution;
+uniform float iTime;
+uniform int iFrame;
+uniform vec4 iMouse;
+void main(){
+  vec2 r=iResolution.xy, p=gl_FragCoord.xy-r*.5;
+  float t=iTime; vec4 o=vec4(0.);
+  for(float i,a;i++<7.;){
+    a=length(p)/r.y-(i*i)/50.;
+    float d=max(a,-a*4.)+2./r.y;
+    a=atan(p.y,p.x)*3.+t*sin(i*i)+i*i;
+    o+=.02/d*smoothstep(0.,.6,cos(a))*(1.+sin(a-i+vec4(0.,.2,.5,0.)));
+  }
+  fragColor=vec4(tanh(o).rgb,1.);
+}`;
+
+    function sh(type, src) {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src); gl.compileShader(s);
+      return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : (console.error(gl.getShaderInfoLog(s)), null);
+    }
+    const vs = sh(gl.VERTEX_SHADER, VERT), fs = sh(gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return;
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    gl.deleteShader(vs); gl.deleteShader(fs);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+
+    const vao = gl.createVertexArray(), vbo = gl.createBuffer();
+    gl.bindVertexArray(vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes=gl.getUniformLocation(prog,'iResolution'), uTime=gl.getUniformLocation(prog,'iTime'),
+          uFrame=gl.getUniformLocation(prog,'iFrame'), uMouse=gl.getUniformLocation(prog,'iMouse');
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const mouse = {x:0, y:0};
+    canvas.addEventListener('mousemove', e => {
+      const r = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - r.left; mouse.y = r.height - (e.clientY - r.top);
+    });
+
+    function resize() {
+      const w = Math.floor(canvas.clientWidth * dpr), h = Math.floor(canvas.clientHeight * dpr);
+      if (canvas.width !== w || canvas.height !== h) { canvas.width=w; canvas.height=h; gl.viewport(0,0,w,h); }
+    }
+    new ResizeObserver(resize).observe(canvas); resize();
+
+    let frame = 0; const t0 = performance.now();
+    (function tick(now) {
+      resize();
+      gl.useProgram(prog);
+      gl.uniform3f(uRes, canvas.width, canvas.height, dpr);
+      gl.uniform1f(uTime, (now - t0) / 1000);
+      gl.uniform1i(uFrame, ++frame);
+      gl.uniform4f(uMouse, mouse.x * dpr, mouse.y * dpr, 0, 0);
+      gl.bindVertexArray(vao);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      requestAnimationFrame(tick);
+    })(t0);
   })();
 </script>
 </body>
