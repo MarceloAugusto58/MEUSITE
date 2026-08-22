@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/altemir/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="description" content="Gigantes do Mercado Imobiliário · 5ª edição · 15 e 16 de outubro de 2026 · Ocean Place, Balneário Camboriú." />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="Gigantes do Mercado Imobiliário 2026" />
+<meta property="og:description" content="15 e 16 de outubro de 2026 · Ocean Place, Balneário Camboriú." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  html { scroll-behavior: smooth; }
+  html, body { margin: 0; padding: 0; background: #0A0D12; }
+  #oferta { scroll-margin-top: 24px; }
+  a:focus-visible, [role="button"]:focus-visible { outline: 3px solid #E3BE73; outline-offset: 3px; border-radius: 999px; }
+  * { box-sizing: border-box; }
+  a { color: #E3BE73; text-decoration: none; }
+  a:hover { color: #F0D9A5; }
+  ::selection { background: #E3BE73; color: #0A0D12; }
+  @keyframes gigPulse { 0%,100% { opacity: .55 } 50% { opacity: 1 } }
+  @keyframes gigRise { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
+  @keyframes gigFloat { 0%,100% { transform: translate3d(0,0,0) } 50% { transform: translate3d(0,-18px,0) } }
+  @keyframes gigShine { 0% { transform: translateX(-120%) } 100% { transform: translateX(220%) } }
+  @property --ga { syntax: "<angle>"; initial-value: 0deg; inherits: false }
+  @property --gao { syntax: "<angle>"; initial-value: 0deg; inherits: false }
+  @property --gp { syntax: "<percentage>"; initial-value: 5%; inherits: false }
+  @property --gs { syntax: "<color>"; initial-value: #ffffff; inherits: false }
+  @keyframes gigAngle { to { --ga: 360deg } }
+  @keyframes gigShimmer { to { rotate: 360deg } }
+  /* ---- carrossel em leque das fotos do evento ---- */
+  [data-gig-carrossel] { --gigC: clamp(190px, 20vw, 300px); --gigH: 2.05; --gigT: 44% }
+  /* no celular so aparecem os vizinhos diretos, entao sobra menos arco pra reservar */
+  @media (max-width: 780px) { [data-gig-carrossel] { --gigC: 38vw; --gigH: 2; --gigT: 42% } }
+  [data-gig-seta]:hover { background: rgba(227,190,115,.16); border-color: rgba(227,190,115,.55); transform: scale(1.06) }
+  [data-gig-palco] figure { will-change: transform, opacity }
+  [data-gig-palco] figure:hover { border-color: rgba(227,190,115,.45) }
+  @media (prefers-reduced-motion: reduce) {
+    [data-gig-palco] figure { transition: none }
+  }
+  /* ---- frase em onda: texto correndo sobre um path (GSAP + ScrollTrigger) ---- */
+  [data-gig-marquee] .pin-height { position: relative }
+  [data-gig-marquee] .container { height: 100vh; display: flex; align-items: center; overflow: hidden }
+  [data-gig-marquee] .container svg { display: block; flex: none; overflow: visible }
+  [data-gig-marquee] #gigTrack text { font-family: 'Sora', sans-serif; font-weight: 700; letter-spacing: -.02em }
+  /* antes do GSAP subir, so o bloco estatico aparece */
+  [data-gig-marquee]:not([data-gig-marquee-ready]) .pin-height { display: none }
+  [data-gig-marquee][data-gig-marquee-ready] [data-gig-marquee-off] { display: none }
+  /* ---- depoimentos em video: capa da Wistia + click-to-play ---- */
+  [data-gig-video] { cursor: pointer; -webkit-tap-highlight-color: transparent }
+  [data-gig-play] { transition: transform 450ms cubic-bezier(.2,.8,.2,1), background 450ms }
+  [data-gig-video]:hover [data-gig-play] { transform: scale(1.09); background: #F0D9A5 }
+  [data-gig-video][data-gig-loaded] { cursor: default; background-image: none }
+  [data-gig-video] iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block }
+  @media (prefers-reduced-motion: reduce) { [data-gig-play] { transition: none } }
+  /* ---- brilho passando nos cards dos graficos ---- */
+  /* a rotacao vai junto no transform: assim a faixa translada no eixo da tela,
+     sem depender da ordem entre a propriedade rotate e o transform */
+  @keyframes gigSweep {
+    0%   { transform: translateX(-160%) rotate(16deg) }
+    52%  { transform: translateX(280%) rotate(16deg) }
+    100% { transform: translateX(280%) rotate(16deg) }
+  }
+  [data-gig-shinecard] { overflow: hidden }
+  [data-gig-shine] { position: absolute; top: -70%; bottom: -70%; left: 0; width: 46%; z-index: 3; pointer-events: none; transform: translateX(-160%) rotate(16deg); animation: gigSweep 5.4s cubic-bezier(.45,0,.25,1) infinite }
+  [data-gig-shinecard="light"] [data-gig-shine] { background: linear-gradient(90deg, rgba(227,190,115,0) 0%, rgba(227,190,115,.1) 22%, rgba(227,190,115,.2) 40%, rgba(255,253,247,.85) 50%, rgba(227,190,115,.2) 60%, rgba(227,190,115,.1) 78%, rgba(227,190,115,0) 100%) }
+  [data-gig-shinecard="dark"] [data-gig-shine] { background: linear-gradient(90deg, rgba(227,190,115,0) 0%, rgba(227,190,115,.04) 20%, rgba(227,190,115,.11) 38%, rgba(247,236,210,.2) 50%, rgba(227,190,115,.11) 62%, rgba(227,190,115,.04) 80%, rgba(227,190,115,0) 100%); animation-delay: .85s }
+  [data-gig-shinecard]:hover [data-gig-shine] { animation-duration: 2.6s }
+  @media (prefers-reduced-motion: reduce) { [data-gig-shine] { animation: none; opacity: 0 } }
+  @property --bx { syntax: "<number>"; initial-value: 50; inherits: true }
+  @property --by { syntax: "<number>"; initial-value: 50; inherits: true }
+  @keyframes gigOrbit { to { rotate: 360deg } }
+  @keyframes gigSheen { 0% { --bx: 22; --by: 16 } 25% { --bx: 78; --by: 22 } 50% { --bx: 78; --by: 82 } 75% { --bx: 22; --by: 78 } 100% { --bx: 22; --by: 16 } }
+  /* ---- lista de dores (secao Problema) ---- */
+  [data-gig-pain] { position: relative; border-radius: 14px; transition: background 550ms cubic-bezier(.25,1,.5,1), transform 550ms cubic-bezier(.25,1,.5,1) }
+  [data-gig-pain] > i[data-gig-rule] { position: absolute; left: 0; top: 12%; bottom: 12%; width: 2px; border-radius: 99px; background: linear-gradient(180deg, rgba(227,190,115,.92), rgba(227,190,115,.06)); opacity: .46; transition: opacity 550ms cubic-bezier(.25,1,.5,1), top 550ms cubic-bezier(.25,1,.5,1), bottom 550ms cubic-bezier(.25,1,.5,1), box-shadow 550ms ease }
+  [data-gig-pain][data-gig-peak] > i[data-gig-rule] { opacity: .72 }
+  [data-gig-pain] .gig-txt { margin: 0; max-width: 66ch; font-size: clamp(17px,1.5vw,20px); line-height: 1.55; color: rgba(245,243,239,.8); text-wrap: pretty; transition: color 550ms ease }
+  [data-gig-pain] .gig-cut { max-width: none; font-family: 'Sora', sans-serif; font-weight: 600; font-size: clamp(20px,2.15vw,27px); line-height: 1.34; letter-spacing: -.012em; color: rgba(245,243,239,.94) }
+  .gig-q { font-style: italic; color: #F0D9A5 }
+  .gig-hl { color: #E3BE73; font-weight: 700 }
+  .gig-dim { color: rgba(245,243,239,.52); font-weight: 400; font-style: normal }
+  @media (hover: hover) {
+    [data-gig-pain]:hover { background: linear-gradient(90deg, rgba(227,190,115,.075), rgba(227,190,115,0) 58%); transform: translateX(5px) }
+    [data-gig-pain]:hover > i[data-gig-rule] { opacity: 1; top: 8%; bottom: 8%; box-shadow: 0 0 18px rgba(227,190,115,.4) }
+    [data-gig-pain]:hover .gig-txt { color: #F5F3EF }
+    [data-gig-pain]:hover .gig-dim { color: rgba(245,243,239,.6) }
+  }
+  @media (max-width: 560px) {
+    [data-gig-pain] { padding-left: 20px }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-gig-pain], [data-gig-pain] > i[data-gig-rule], [data-gig-pain] .gig-txt { transition: none }
+  }
+  [data-gig-orb] { position: absolute; inset: -12px; z-index: -1; pointer-events: none; animation: gigOrbit 8s linear infinite }
+  [data-gig-orb] > i { position: absolute; left: 50%; top: -8%; width: 52%; height: 52%; margin-left: -26%; border-radius: 999px; background: radial-gradient(circle, #F6E9C8 0%, #E3BE73 38%, rgba(215,169,78,.55) 66%, rgba(240,40,30,.35) 82%, transparent 86%); filter: blur(30px); opacity: .5; transition: filter .35s ease, opacity .35s ease, transform .35s ease }
+  [data-gig-glowcard]:hover [data-gig-orb] > i { filter: blur(16px); opacity: .95; transform: scale(1.3) }
+  [data-gig-sheen] { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; mix-blend-mode: screen; animation: gigSheen 11s linear infinite; background: radial-gradient(36% 36% at calc(var(--bx) * 1%) calc(var(--by) * 1%), rgba(227,190,115,.2) 0%, rgba(227,190,115,.06) 45%, transparent 72%) }
+  @keyframes gigBreathe { from, to { scale: 1 } 50% { scale: 1.2 } }
+  @keyframes gigMarquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+  @keyframes gigBob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(9px) } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important } }
+</style>
+</helmet>
+
+<div style="background:#0A0D12;color:#F5F3EF;font-family:'DM Sans',system-ui,sans-serif;font-size:17px;line-height:1.6;overflow-x:hidden">
+
+  <!-- textura de grão -->
+  <div aria-hidden="true" style="position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.055;mix-blend-mode:overlay;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E&quot;);background-size:160px 160px"></div>
+
+  <!-- ================= HERO ================= -->
+  <section data-gig-reveal-scope="" data-screen-label="Hero" style="position:relative;padding:26px 24px 96px;background:radial-gradient(120% 90% at 50% -10%, #16233C 0%, #0C121C 45%, #0A0D12 100%);overflow:hidden">
+    <div aria-hidden="true" style="position:absolute;inset:-40px;pointer-events:none;background:url('/altemir/img/fundo.jpg') center/cover no-repeat;filter:blur(10px) saturate(.95);opacity:.85"></div>
+    <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(58% 62% at 50% 42%, rgba(10,13,18,.94) 0%, rgba(10,13,18,.86) 45%, rgba(10,13,18,.5) 75%, rgba(10,13,18,.28) 100%), linear-gradient(180deg, rgba(10,13,18,.25) 0%, rgba(10,13,18,.35) 60%, #0A0D12 100%);backdrop-filter:blur(2px)"></div>
+    <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);mask-image:radial-gradient(46% 54% at 50% 40%, #000 0%, #000 55%, transparent 100%);-webkit-mask-image:radial-gradient(46% 54% at 50% 40%, #000 0%, #000 55%, transparent 100%)"></div>
+    <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(227,190,115,.08) 1px, transparent 1px),linear-gradient(90deg, rgba(227,190,115,.08) 1px, transparent 1px);background-size:76px 76px;mask-image:radial-gradient(85% 60% at 50% 8%, #000 0%, transparent 72%);-webkit-mask-image:radial-gradient(85% 60% at 50% 8%, #000 0%, transparent 72%)"></div>
+    <div aria-hidden="true" style="position:absolute;top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;pointer-events:none;border-radius:999px;background:radial-gradient(circle, rgba(227,190,115,.16), transparent 65%);filter:blur(20px);animation:gigFloat 13s ease-in-out infinite"></div>
+    <div aria-hidden="true" style="position:absolute;bottom:-120px;right:-80px;width:420px;height:420px;pointer-events:none;border-radius:999px;background:radial-gradient(circle, rgba(240,40,30,.12), transparent 65%);filter:blur(24px);animation:gigFloat 17s ease-in-out infinite reverse"></div>
+    <div style="position:relative;max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:44px">
+
+      <header style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;padding:8px 0 4px">
+        <img src="/altemir/img/logo-white.png" alt="Gigantes do Mercado Imobiliário 2026" style="height:clamp(44px,5vw,64px);width:auto;display:block" />
+        
+      </header>
+
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:28px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:clamp(13px,1.2vw,16px);letter-spacing:.16em;text-transform:uppercase;color:#E3BE73;max-width:900px;line-height:1.8">5ª EDIÇÃO · 15 E 16 DE OUTUBRO DE 2026 · OCEAN PLACE, BALNEÁRIO CAMBORIÚ</div>
+
+        <h1 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(32px,5.4vw,64px);line-height:1.06;letter-spacing:-.025em;max-width:980px;text-wrap:pretty">Existe uma escada que leva o corretor e o dono de imobiliária ao <span style="color:#E3BE73">topo do mercado</span>, e 99% nunca vão enxergar ela.</h1>
+
+        <p style="margin:0;font-size:clamp(17px,1.6vw,21px);line-height:1.55;color:rgba(245,243,239,.76);max-width:790px;text-wrap:pretty">Dois dias em Balneário Camboriú com quem já formou mais de 10 mil corretores, pra você parar de subir o morro das vendas no facão e aprender a conduzir o cliente até o fechamento.</p>
+      </div>
+
+      <div style="position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(227,190,115,.28);box-shadow:0 40px 90px -40px rgba(0,0,0,.9)">
+        <div style="aspect-ratio:16/9;width:100%;background:repeating-linear-gradient(135deg, rgba(255,255,255,.055) 0 12px, rgba(255,255,255,.02) 12px 24px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+          <div style="width:82px;height:82px;border-radius:999px;background:#E3BE73;display:flex;align-items:center;justify-content:center">
+            <div style="width:0;height:0;border-left:24px solid #0A0D12;border-top:15px solid transparent;border-bottom:15px solid transparent;margin-left:7px"></div>
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,243,239,.62);text-align:center;padding:0 24px">vídeo da vsl · autoplay mudo com legenda e botão de som</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+        <a href="#oferta" style="display:inline-flex;align-items:center;justify-content:center;padding:22px 46px;border-radius:999px;isolation:isolate;--ga:0deg;--gao:0deg;--gp:5%;--gs:#ffffff;position:relative;overflow:hidden;outline-offset:4px;border:1px solid transparent;color:#F3DFAE;white-space:nowrap;background:linear-gradient(#1B212B,#12161D) padding-box, conic-gradient(from calc(var(--ga) - var(--gao)), transparent, #E3BE73 var(--gp), var(--gs) calc(var(--gp) * 2), #E3BE73 calc(var(--gp) * 3), transparent calc(var(--gp) * 4)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 18px 40px -20px rgba(0,0,0,.85);animation:gigAngle 3s linear infinite;transition:--gao 800ms cubic-bezier(.25,1,.5,1),--gp 800ms cubic-bezier(.25,1,.5,1),--gs 800ms cubic-bezier(.25,1,.5,1);font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(14px,1.4vw,18px);letter-spacing:.02em;text-align:center" style-before="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:inherit;opacity:.4;background:radial-gradient(circle at 2px 2px, #fff .5px, transparent 0) padding-box;background-size:4px 4px;background-repeat:space;mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000);-webkit-mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000)" style-after="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:100%;aspect-ratio:1;opacity:.42;background:linear-gradient(-50deg, transparent, #E3BE73, transparent);mask-image:radial-gradient(circle at bottom, transparent 40%, #000);-webkit-mask-image:radial-gradient(circle at bottom, transparent 40%, #000);animation:gigShimmer 3s linear infinite" style-hover="--gp:20%;--gao:95deg;--gs:#F0D9A5;transform:translateY(-2px)">GARANTIR MEU PASSAPORTE</a>
+        <div style="font-size:14px;color:rgba(245,243,239,.62)">Vagas limitadas. O valor sobe a cada novo lote.</div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
+        <div style="padding:11px 18px;border:1px solid rgba(245,243,239,.14);border-radius:999px;background:rgba(245,243,239,.03);font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,239,.72)">5ª edição</div>
+        <div style="padding:11px 18px;border:1px solid rgba(245,243,239,.14);border-radius:999px;background:rgba(245,243,239,.03);font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,239,.72)">Edições esgotadas</div>
+        <div style="padding:11px 18px;border:1px solid rgba(245,243,239,.14);border-radius:999px;background:rgba(245,243,239,.03);font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,239,.72)">+10 mil corretores formados</div>
+        <div style="padding:11px 18px;border:1px solid rgba(245,243,239,.14);border-radius:999px;background:rgba(245,243,239,.03);font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,239,.72)">+R$2 bilhões em vendas</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROBLEMA ================= -->
+  <section data-gig-reveal-scope="" data-screen-label="Problema" style="padding:100px 24px;background:radial-gradient(115% 62% at 8% -6%, #15171E 0%, #0A0D12 58%);border-top:1px solid rgba(245,243,239,.07)">
+    <div style="max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:52px">
+      <h2 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(27px,3.9vw,46px);line-height:1.12;letter-spacing:-.02em;max-width:840px;text-wrap:pretty">Você não está travado por falta de esforço. Está subindo o morro das vendas no facão.</h2>
+
+      <div data-gig-stagger="" style="display:flex;flex-direction:column;gap:4px">
+        <div data-gig-pain="" style="position:relative;padding:clamp(20px,2.4vw,28px) clamp(18px,2vw,26px) clamp(20px,2.4vw,28px) clamp(22px,2.4vw,30px)">
+          <i data-gig-rule="" aria-hidden="true"></i>
+          <p class="gig-txt">Você segue o script, aplica o gatilho, decora cada técnica de fechamento. E mesmo assim ouve <span class="gig-q">"vou pensar"</span> e vê o cliente sumir.</p>
+        </div>
+        <div data-gig-pain="" style="position:relative;padding:clamp(20px,2.4vw,28px) clamp(18px,2vw,26px) clamp(20px,2.4vw,28px) clamp(22px,2.4vw,30px)">
+          <i data-gig-rule="" aria-hidden="true"></i>
+          <p class="gig-txt">Trabalha mais que todo mundo na imobiliária e, no fim do mês, a comissão não bate com o tanto que você se matou.</p>
+        </div>
+        <div data-gig-pain="" style="position:relative;padding:clamp(20px,2.4vw,28px) clamp(18px,2vw,26px) clamp(20px,2.4vw,28px) clamp(22px,2.4vw,30px)">
+          <i data-gig-rule="" aria-hidden="true"></i>
+          <p class="gig-txt">Fechou duas vendas no mês e acha que tá ótimo. Duas vendas no mês é você sobrevivendo, se contentando com a <span class="gig-hl">migalha</span> achando que é <span class="gig-hl">banquete</span>.</p>
+        </div>
+        <div data-gig-pain="" style="position:relative;padding:clamp(20px,2.4vw,28px) clamp(18px,2vw,26px) clamp(20px,2.4vw,28px) clamp(22px,2.4vw,30px)">
+          <i data-gig-rule="" aria-hidden="true"></i>
+          <p class="gig-txt gig-cut">O carro que você financiou inteiro <span class="gig-dim">pra parecer o corretor de sucesso lá fora.</span></p>
+        </div>
+        <div data-gig-pain="" data-gig-peak="" style="position:relative;padding:clamp(20px,2.4vw,28px) clamp(18px,2vw,26px) clamp(20px,2.4vw,28px) clamp(22px,2.4vw,30px)">
+          <i data-gig-rule="" aria-hidden="true"></i>
+          <p class="gig-txt gig-cut">O "agora não, o pai tá trabalhando" <span class="gig-dim">que virou rotina dentro de casa.</span></p>
+        </div>
+      </div>
+
+      <p style="margin:0;max-width:720px;font-size:18px;line-height:1.7;color:rgba(245,243,239,.6);text-wrap:pretty">A corretagem é confortável. Ar-condicionado, café na mão, a manhã inteira falando de futebol e de tudo, menos de negócio. É fácil confundir movimento com resultado, até você olhar pra trás e ver que fechou o mesmo tanto de sempre.</p>
+
+    </div>
+  </section>
+
+  <!-- ================= FRASE EM ONDA (GSAP) ================= -->
+  <section data-gig-marquee="" data-screen-label="O facão" style="position:relative;background:#0A0D12">
+    <!-- estatico: e o que fica no ar se o GSAP nao carregar ou se o visitante pediu menos movimento -->
+    <div data-gig-marquee-off="" style="max-width:960px;margin:0 auto;padding:0 24px 100px">
+      <div style="padding:40px;border-left:3px solid #E3BE73;background:linear-gradient(90deg, rgba(227,190,115,.09), rgba(227,190,115,0))">
+        <p style="margin:0;font-family:'Sora',sans-serif;font-weight:600;font-size:clamp(22px,2.9vw,34px);line-height:1.25;letter-spacing:-.015em;text-wrap:pretty">O nome disso é <span style="color:#E3BE73">subir o morro no facão</span>: forçar a venda na pressão, cortando mato e brigando com o cliente pra ver quem cansa primeiro.</p>
+      </div>
+    </div>
+
+    <div class="pin-height">
+      <div class="container">
+        <svg viewBox="0 0 2577 391" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="O nome disso é subir o morro no facão: forçar a venda na pressão, cortando mato e brigando com o cliente pra ver quem cansa primeiro.">
+          <path id="gigLine" d="M0 195H2576" fill="none" stroke="none"/>
+          <path id="gigWave" d="M0 195H2576" fill="none" stroke="#E3BE73" stroke-width="2" style="opacity:0"/>
+          <g id="gigTrack">
+          <text class="segment" fill="#F5F3EF" font-size="350"><textPath href="#gigLine" text-anchor="start" startOffset="0">O nome disso é</textPath></text>
+          <text class="segment" fill="#E3BE73" font-size="350"><textPath href="#gigLine" text-anchor="start" startOffset="0">subir o morro no facão:</textPath></text>
+          <text class="segment" fill="#F5F3EF" font-size="350"><textPath href="#gigLine" text-anchor="start" startOffset="0">forçar a venda na pressão,</textPath></text>
+          <text class="segment" fill="#F5F3EF" font-size="350"><textPath href="#gigLine" text-anchor="start" startOffset="0">cortando mato e brigando com o cliente pra ver quem cansa primeiro.</textPath></text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= A ESCADA ================= -->
+  <section data-gig-reveal-scope="" data-screen-label="A Escada" style="padding:100px 24px;background:linear-gradient(180deg,#F4F1EA 0%,#EDE8DE 100%);color:#111820;position:relative;overflow:hidden">
+    <canvas data-gig-shader="" data-gig-tone="light" aria-hidden="true" style="position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;opacity:.16"></canvas>
+    <div style="position:relative;z-index:1;max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:56px">
+      <div style="display:flex;flex-direction:column;gap:26px;max-width:900px">
+        <h2 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(27px,3.9vw,46px);line-height:1.12;letter-spacing:-.02em;text-wrap:pretty">O cliente não compra quando você quebra a objeção dele. Compra quando <span style="border-bottom:4px solid #C79A3E">para de se defender de você.</span></h2>
+        <p style="margin:0;font-size:19px;line-height:1.65;color:rgba(17,24,32,.72);max-width:780px;text-wrap:pretty">A maior decisão financeira da vida de uma família e de um investidor não se fecha na pressão. Se conduz na relação. Quando você conduz em vez de dobrar, a proposta que o cliente recusou vira o começo da conversa, e não o fim.</p>
+        <p style="margin:0;font-size:19px;line-height:1.65;color:rgba(17,24,32,.72);max-width:780px;text-wrap:pretty">A Escada é a camada da venda que quase ninguém enxerga, porque todo mundo está ocupado demais querendo subir o morro das vendas no facão.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+        <div data-gig-shinecard="light" style="position:relative;isolation:isolate;padding:32px;border-radius:18px;background:#EFEBE2;border:1px solid rgba(17,24,32,.1);display:flex;flex-direction:column;gap:22px"><i data-gig-shine="" aria-hidden="true"></i>
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(15px,1.7vw,19px);letter-spacing:.04em;color:#111820;text-align:center">RESULTADOS <span style="color:#B08432">SEM</span> A ESCADA</div>
+            <svg viewBox="0 0 470 300" role="img" aria-label="Gráfico de resultados sem a Escada: queda constante de janeiro a junho" style="width:100%;height:auto;display:block">
+              <line x1="70" y1="250.0" x2="440" y2="250.0" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="70" y1="202.5" x2="440" y2="202.5" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="70" y1="155.0" x2="440" y2="155.0" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="70" y1="107.5" x2="440" y2="107.5" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="70" y1="60.0" x2="440" y2="60.0" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="100.8" y1="60" x2="100.8" y2="250" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="162.5" y1="60" x2="162.5" y2="250" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="224.2" y1="60" x2="224.2" y2="250" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="285.8" y1="60" x2="285.8" y2="250" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="347.5" y1="60" x2="347.5" y2="250" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="409.2" y1="60" x2="409.2" y2="250" stroke="rgba(17,24,32,.13)" stroke-width="1" stroke-dasharray="4 5"></line>
+              <line x1="70" y1="250" x2="440" y2="250" stroke="rgba(17,24,32,.22)" stroke-width="1.5"></line>
+              <line x1="70" y1="60" x2="70" y2="250" stroke="rgba(17,24,32,.22)" stroke-width="1.5"></line>
+              <text x="56" y="255.0" text-anchor="end" font-family="DM Sans, sans-serif" font-size="15" fill="rgba(17,24,32,.5)">0</text><text x="56" y="207.5" text-anchor="end" font-family="DM Sans, sans-serif" font-size="15" fill="rgba(17,24,32,.5)">25</text><text x="56" y="160.0" text-anchor="end" font-family="DM Sans, sans-serif" font-size="15" fill="rgba(17,24,32,.5)">50</text><text x="56" y="112.5" text-anchor="end" font-family="DM Sans, sans-serif" font-size="15" fill="rgba(17,24,32,.5)">75</text><text x="56" y="65.0" text-anchor="end" font-family="DM Sans, sans-serif" font-size="15" fill="rgba(17,24,32,.5)">100</text><text x="100.8" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(17,24,32,.5)">JAN</text><text x="162.5" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(17,24,32,.5)">FEV</text><text x="224.2" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(17,24,32,.5)">MAR</text><text x="285.8" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(17,24,32,.5)">ABR</text><text x="347.5" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(17,24,32,.5)">MAI</text><text x="409.2" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(17,24,32,.5)">JUN</text>
+              <polyline points="100.8,96.1 162.5,126.5 224.2,160.7 285.8,191.1 347.5,219.6 409.2,248.1" fill="none" stroke="#3E4650" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+              <circle cx="100.8" cy="96.1" r="7" fill="#EFEBE2" stroke="#3E4650" stroke-width="3"></circle><circle cx="162.5" cy="126.5" r="4.5" fill="#3E4650" stroke="#3E4650" stroke-width="0"></circle><circle cx="224.2" cy="160.7" r="4.5" fill="#3E4650" stroke="#3E4650" stroke-width="0"></circle><circle cx="285.8" cy="191.1" r="4.5" fill="#3E4650" stroke="#3E4650" stroke-width="0"></circle><circle cx="347.5" cy="219.6" r="4.5" fill="#3E4650" stroke="#3E4650" stroke-width="0"></circle><circle cx="409.2" cy="248.1" r="7" fill="#EFEBE2" stroke="#3E4650" stroke-width="3"></circle>
+            </svg>
+            <div style="display:flex;align-items:center;justify-content:center;gap:10px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:.06em;color:rgba(17,24,32,.55)"><span style="width:22px;height:3px;border-radius:2px;background:#3E4650"></span>VENDAS / RESULTADOS / CRESCIMENTO</div>
+          </div>
+          </div>
+        <div data-gig-shinecard="dark" style="position:relative;isolation:isolate;padding:32px;border-radius:18px;background:#111820;color:#F5F3EF;display:flex;flex-direction:column;gap:22px;box-shadow:0 30px 60px -30px rgba(17,24,32,.55)"><i data-gig-shine="" aria-hidden="true"></i>
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(15px,1.7vw,19px);letter-spacing:.04em;color:#F5F3EF;text-align:center">RESULTADOS <span style="color:#E3BE73">COM</span> A ESCADA</div>
+            <svg viewBox="0 0 470 300" role="img" aria-label="Gráfico de resultados com a Escada: crescimento constante de janeiro a junho" style="width:100%;height:auto;display:block">
+              <defs>
+                <linearGradient id="gigBar" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#F6E3B0"></stop><stop offset="1" stop-color="#C99A33"></stop>
+                </linearGradient>
+              </defs>
+              <line x1="70" y1="250.0" x2="440" y2="250.0" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="70" y1="202.5" x2="440" y2="202.5" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="70" y1="155.0" x2="440" y2="155.0" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="70" y1="107.5" x2="440" y2="107.5" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="70" y1="60.0" x2="440" y2="60.0" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="100.8" y1="60" x2="100.8" y2="250" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="162.5" y1="60" x2="162.5" y2="250" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="224.2" y1="60" x2="224.2" y2="250" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="285.8" y1="60" x2="285.8" y2="250" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="347.5" y1="60" x2="347.5" y2="250" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line><line x1="409.2" y1="60" x2="409.2" y2="250" stroke="rgba(245,243,239,.09)" stroke-width="1" stroke-dasharray="4 5"></line>
+              <line x1="70" y1="250" x2="440" y2="250" stroke="rgba(227,190,115,.35)" stroke-width="1.5"></line>
+              <line x1="70" y1="60" x2="70" y2="250" stroke="rgba(227,190,115,.35)" stroke-width="1.5"></line>
+              <text x="56" y="255.0" text-anchor="end" font-family="DM Sans, sans-serif" font-size="15" fill="#E3BE73">0</text><text x="56" y="207.5" text-anchor="end" font-family="DM Sans, sans-serif" font-size="15" fill="#E3BE73">25</text><text x="56" y="160.0" text-anchor="end" font-family="DM Sans, sans-serif" font-size="15" fill="#E3BE73">50</text><text x="56" y="112.5" text-anchor="end" font-family="DM Sans, sans-serif" font-size="15" fill="#E3BE73">75</text><text x="56" y="65.0" text-anchor="end" font-family="DM Sans, sans-serif" font-size="15" fill="#E3BE73">100</text><text x="100.8" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(245,243,239,.72)">JAN</text><text x="162.5" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(245,243,239,.72)">FEV</text><text x="224.2" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(245,243,239,.72)">MAR</text><text x="285.8" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(245,243,239,.72)">ABR</text><text x="347.5" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(245,243,239,.72)">MAI</text><text x="409.2" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="15" letter-spacing="1" fill="rgba(245,243,239,.72)">JUN</text>
+              <rect x="78.8" y="223.4" width="44" height="26.6" rx="3" fill="url(#gigBar)"></rect><rect x="140.5" y="202.5" width="44" height="47.5" rx="3" fill="url(#gigBar)"></rect><rect x="202.2" y="175.9" width="44" height="74.1" rx="3" fill="url(#gigBar)"></rect><rect x="263.8" y="147.4" width="44" height="102.6" rx="3" fill="url(#gigBar)"></rect><rect x="325.5" y="109.4" width="44" height="140.6" rx="3" fill="url(#gigBar)"></rect><rect x="387.2" y="71.4" width="44" height="178.6" rx="3" fill="url(#gigBar)"></rect>
+              <path d="M100.8 212.0 C 224.2 185.4, 285.8 124.6, 409.2 58.1" fill="none" stroke="#E3BE73" stroke-width="2.5" stroke-linecap="round" opacity=".9"></path>
+              <circle cx="409.2" cy="58.1" r="13" fill="#E3BE73" opacity=".25"></circle>
+              <circle cx="409.2" cy="58.1" r="6.5" fill="#FFF6DF" style="filter:drop-shadow(0 0 8px #E3BE73)"></circle>
+            </svg>
+            <div style="display:flex;align-items:center;justify-content:center;gap:10px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:.06em;color:rgba(245,243,239,.62)"><span style="width:22px;height:3px;border-radius:2px;background:#E3BE73"></span>VENDAS / RESULTADOS / CRESCIMENTO</div>
+          </div>
+          </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:#8A6A2A">O que é a Escada</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="padding:24px 26px;background:#FFFFFF;border-radius:14px;border:1px solid rgba(17,24,32,.08);margin-left:0">
+            <p style="margin:0;font-size:18px;line-height:1.5;color:#111820">Não é dom, não é lábia, não é ser o corretor mais bonito da sala.</p>
+          </div>
+          <div style="padding:24px 26px;background:#FFFFFF;border-radius:14px;border:1px solid rgba(17,24,32,.08);margin-left:clamp(0px,3vw,42px)">
+            <p style="margin:0;font-size:18px;line-height:1.5;color:#111820">É entender o que se passa na cabeça do cliente antes dele mesmo entender.</p>
+          </div>
+          <div style="padding:24px 26px;background:#FFFFFF;border-radius:14px;border:1px solid rgba(17,24,32,.08);margin-left:clamp(0px,6vw,84px)">
+            <p style="margin:0;font-size:18px;line-height:1.5;color:#111820">É conduzir a conversa até a compra virar a conclusão natural pra ele.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+        <a href="#oferta" style="display:inline-flex;align-items:center;justify-content:center;padding:21px 44px;border-radius:999px;isolation:isolate;--ga:0deg;--gao:0deg;--gp:5%;--gs:#ffffff;position:relative;overflow:hidden;outline-offset:4px;border:1px solid transparent;color:#F3DFAE;white-space:nowrap;background:linear-gradient(#1B212B,#12161D) padding-box, conic-gradient(from calc(var(--ga) - var(--gao)), transparent, #E3BE73 var(--gp), var(--gs) calc(var(--gp) * 2), #E3BE73 calc(var(--gp) * 3), transparent calc(var(--gp) * 4)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 18px 40px -20px rgba(0,0,0,.85);animation:gigAngle 3s linear infinite;transition:--gao 800ms cubic-bezier(.25,1,.5,1),--gp 800ms cubic-bezier(.25,1,.5,1),--gs 800ms cubic-bezier(.25,1,.5,1);font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(14px,1.4vw,17px)" style-before="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:inherit;opacity:.4;background:radial-gradient(circle at 2px 2px, #fff .5px, transparent 0) padding-box;background-size:4px 4px;background-repeat:space;mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000);-webkit-mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000)" style-after="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:100%;aspect-ratio:1;opacity:.42;background:linear-gradient(-50deg, transparent, #E3BE73, transparent);mask-image:radial-gradient(circle at bottom, transparent 40%, #000);-webkit-mask-image:radial-gradient(circle at bottom, transparent 40%, #000);animation:gigShimmer 3s linear infinite" style-hover="--gp:20%;--gao:95deg;--gs:#F0D9A5;transform:translateY(-2px)">QUERO APRENDER A ESCADA</a>
+        <div style="font-size:14px;color:rgba(17,24,32,.55)">Toque e garanta seu passaporte pro Gigantes.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROVA ================= -->
+  <section data-gig-reveal-scope="" data-screen-label="Prova" style="position:relative;overflow:hidden;padding:100px 24px;background:#0A0D12">
+    <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(227,190,115,.17) 1px, transparent 1px);background-size:26px 26px;mask-image:radial-gradient(76% 60% at 50% 20%, #000 0%, rgba(0,0,0,.5) 46%, transparent 80%);-webkit-mask-image:radial-gradient(76% 60% at 50% 20%, #000 0%, rgba(0,0,0,.5) 46%, transparent 80%)"></div>
+    <div aria-hidden="true" style="position:absolute;top:-260px;left:50%;width:940px;height:560px;margin-left:-470px;pointer-events:none;border-radius:999px;background:radial-gradient(closest-side, rgba(227,190,115,.14), transparent 72%);filter:blur(30px);animation:gigFloat 19s ease-in-out infinite"></div>
+    <div style="position:relative;z-index:1;max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:52px">
+      <div style="display:flex;flex-direction:column;gap:18px;max-width:900px">
+        <h2 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(27px,3.9vw,46px);line-height:1.12;letter-spacing:-.02em;text-wrap:pretty">Amauri pintava parede no fim de semana. Hoje fatura 1 milhão em comissão. A diferença tem nome.</h2>
+      </div>
+
+      <div style="position:relative">
+        <div data-gig-keep="" aria-hidden="true" style="position:absolute;inset:-5%;pointer-events:none;filter:blur(80px);opacity:.55;background:radial-gradient(34% 44% at 22% 26%, rgba(227,190,115,.8), transparent 70%), radial-gradient(32% 40% at 78% 30%, rgba(215,169,78,.6), transparent 72%), radial-gradient(38% 46% at 50% 78%, rgba(240,40,30,.4), transparent 72%);animation:gigFloat 20s ease-in-out infinite"></div>
+        <div style="position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,370px),1fr));gap:20px">
+        <div style="position:relative;border:1px solid rgba(227,190,115,.2);border-radius:18px;overflow:hidden;background:rgba(14,19,27,.62);backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3);display:flex;flex-direction:column;transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .45s,box-shadow .45s" style-hover="transform:translateY(-6px);border-color:rgba(227,190,115,.5);box-shadow:0 30px 60px -30px rgba(0,0,0,.85)">
+          <a data-gig-video="vhbwaetg7w" data-gig-nome="Amauri Nobre" href="https://gigantes.ibraciv.com?wvideo=vhbwaetg7w" aria-label="Assistir ao depoimento em vídeo de Amauri Nobre" style="position:relative;display:block;aspect-ratio:16/9;border-radius:17px 17px 0 0;overflow:hidden;background:#0E131B url('https://embed-ssl.wistia.com/deliveries/89aa43d5b91b78d6d15d1475f5d3bf92.jpg?image_crop_resized=1280x720') center/cover no-repeat">
+            <span aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,13,18,.10) 0%, rgba(10,13,18,.30) 55%, rgba(10,13,18,.72) 100%)"></span>
+            <span data-gig-play="" aria-hidden="true" style="position:absolute;top:50%;left:50%;translate:-50% -50%;width:58px;height:58px;border-radius:999px;background:rgba(227,190,115,.94);box-shadow:0 16px 38px -14px rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center"><span style="width:0;height:0;border-left:17px solid #0A0D12;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px"></span></span>
+            <span aria-hidden="true" style="position:absolute;left:16px;bottom:13px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,243,239,.72)">depoimento em vídeo</span>
+          </a>
+          <div style="padding:26px;display:flex;flex-direction:column;gap:14px">
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:20px">Amauri Nobre</div>
+                        <p style="margin:0;font-size:16.5px;line-height:1.55;color:rgba(245,243,239,.74);text-wrap:pretty">Era corretor e pintava parede no fim de semana pra fechar o mês. Depois que aprendeu a conduzir: 300 negócios em 12 meses e 1 milhão em comissão em menos de 1 ano.</p>
+          </div>
+        </div>
+
+        <div style="position:relative;border:1px solid rgba(227,190,115,.2);border-radius:18px;overflow:hidden;background:rgba(14,19,27,.62);backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3);display:flex;flex-direction:column;transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .45s,box-shadow .45s" style-hover="transform:translateY(-6px);border-color:rgba(227,190,115,.5);box-shadow:0 30px 60px -30px rgba(0,0,0,.85)">
+          <a data-gig-video="91hbvw7p7c" data-gig-nome="Joel Gossmann" href="https://gigantes.ibraciv.com?wvideo=91hbvw7p7c" aria-label="Assistir ao depoimento em vídeo de Joel Gossmann" style="position:relative;display:block;aspect-ratio:16/9;border-radius:17px 17px 0 0;overflow:hidden;background:#0E131B url('https://embed-ssl.wistia.com/deliveries/00a32d6aacdea2aaed7c97cc9e9c9fbf.jpg?image_crop_resized=1280x720') center/cover no-repeat">
+            <span aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,13,18,.10) 0%, rgba(10,13,18,.30) 55%, rgba(10,13,18,.72) 100%)"></span>
+            <span data-gig-play="" aria-hidden="true" style="position:absolute;top:50%;left:50%;translate:-50% -50%;width:58px;height:58px;border-radius:999px;background:rgba(227,190,115,.94);box-shadow:0 16px 38px -14px rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center"><span style="width:0;height:0;border-left:17px solid #0A0D12;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px"></span></span>
+            <span aria-hidden="true" style="position:absolute;left:16px;bottom:13px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,243,239,.72)">depoimento em vídeo</span>
+          </a>
+          <div style="padding:26px;display:flex;flex-direction:column;gap:14px">
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:20px">Joel Gossmann</div>
+                        <p style="margin:0;font-size:16.5px;line-height:1.55;color:rgba(245,243,239,.74);text-wrap:pretty">Era garçom. Abriu a imobiliária dentro do quarto de casa, numa cidade de 20 mil habitantes. Hoje bate 1 milhão em comissão no ano, trocou o carro velho pela caminhonete do ano e comprou o apartamento na praia.</p>
+          </div>
+        </div>
+
+        <div style="position:relative;border:1px solid rgba(227,190,115,.2);border-radius:18px;overflow:hidden;background:rgba(14,19,27,.62);backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3);display:flex;flex-direction:column;transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .45s,box-shadow .45s" style-hover="transform:translateY(-6px);border-color:rgba(227,190,115,.5);box-shadow:0 30px 60px -30px rgba(0,0,0,.85)">
+          <a data-gig-video="tzu9xexwqc" data-gig-nome="Rafael e Marelise" href="https://gigantes.ibraciv.com?wvideo=tzu9xexwqc" aria-label="Assistir ao depoimento em vídeo de Rafael e Marelise" style="position:relative;display:block;aspect-ratio:16/9;border-radius:17px 17px 0 0;overflow:hidden;background:#0E131B url('https://embed-ssl.wistia.com/deliveries/447b27b0d22168e119e8ae34ac2968e1.jpg?image_crop_resized=1280x720') center/cover no-repeat">
+            <span aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,13,18,.10) 0%, rgba(10,13,18,.30) 55%, rgba(10,13,18,.72) 100%)"></span>
+            <span data-gig-play="" aria-hidden="true" style="position:absolute;top:50%;left:50%;translate:-50% -50%;width:58px;height:58px;border-radius:999px;background:rgba(227,190,115,.94);box-shadow:0 16px 38px -14px rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center"><span style="width:0;height:0;border-left:17px solid #0A0D12;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px"></span></span>
+            <span aria-hidden="true" style="position:absolute;left:16px;bottom:13px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,243,239,.72)">depoimento em vídeo</span>
+          </a>
+          <div style="padding:26px;display:flex;flex-direction:column;gap:14px">
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:20px">Rafael e Marelise</div>
+                        <p style="margin:0;font-size:16.5px;line-height:1.55;color:rgba(245,243,239,.74);text-wrap:pretty">Montaram a equipe do zero e cresceram o faturamento em 130% em apenas 3 meses.</p>
+          </div>
+        </div>
+
+        <div style="position:relative;border:1px solid rgba(227,190,115,.2);border-radius:18px;overflow:hidden;background:rgba(14,19,27,.62);backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3);display:flex;flex-direction:column;transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .45s,box-shadow .45s" style-hover="transform:translateY(-6px);border-color:rgba(227,190,115,.5);box-shadow:0 30px 60px -30px rgba(0,0,0,.85)">
+          <a data-gig-video="5to2qn2ycj" data-gig-nome="Maria de Fátima" href="https://gigantes.ibraciv.com?wvideo=5to2qn2ycj" aria-label="Assistir ao depoimento em vídeo de Maria de Fátima" style="position:relative;display:block;aspect-ratio:16/9;border-radius:17px 17px 0 0;overflow:hidden;background:#0E131B url('https://embed-ssl.wistia.com/deliveries/5e4950ada51d2568e6df0d2efda22a69.jpg?image_crop_resized=1280x720') center/cover no-repeat">
+            <span aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,13,18,.10) 0%, rgba(10,13,18,.30) 55%, rgba(10,13,18,.72) 100%)"></span>
+            <span data-gig-play="" aria-hidden="true" style="position:absolute;top:50%;left:50%;translate:-50% -50%;width:58px;height:58px;border-radius:999px;background:rgba(227,190,115,.94);box-shadow:0 16px 38px -14px rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center"><span style="width:0;height:0;border-left:17px solid #0A0D12;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px"></span></span>
+            <span aria-hidden="true" style="position:absolute;left:16px;bottom:13px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,243,239,.72)">depoimento em vídeo</span>
+          </a>
+          <div style="padding:26px;display:flex;flex-direction:column;gap:14px">
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:20px">Maria de Fátima</div>
+                        <p style="margin:0;font-size:16.5px;line-height:1.55;color:rgba(245,243,239,.74);text-wrap:pretty">Já faturava 8 milhões por ano. Depois de conhecer o Gigantes, vendeu 69 milhões, e em 7 meses chegou a 99.</p>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px;border:1px solid rgba(227,190,115,.28);border-radius:18px;overflow:hidden;background:rgba(227,190,115,.06)">
+        <div style="padding:34px 28px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(30px,3.4vw,42px);color:#E3BE73;letter-spacing:-.02em">+10 mil</div>
+          <div style="font-size:15.5px;color:rgba(245,243,239,.7)">corretores formados</div>
+        </div>
+        <div style="padding:34px 28px;display:flex;flex-direction:column;gap:8px;border-left:1px solid rgba(227,190,115,.2)">
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(30px,3.4vw,42px);color:#E3BE73;letter-spacing:-.02em">+1.000</div>
+          <div style="font-size:15.5px;color:rgba(245,243,239,.7)">já bateram 1 milhão em comissão</div>
+        </div>
+        <div style="padding:34px 28px;display:flex;flex-direction:column;gap:8px;border-left:1px solid rgba(227,190,115,.2)">
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(30px,3.4vw,42px);color:#E3BE73;letter-spacing:-.02em">+R$2 bi</div>
+          <div style="font-size:15.5px;color:rgba(245,243,239,.7)">somados em vendas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= AUTORIDADE ================= -->
+  <section data-gig-reveal-scope="" data-screen-label="Autoridade" style="padding:100px 24px;background:linear-gradient(180deg,#0A0D12,#101724)">
+    <div style="max-width:1120px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:48px;align-items:center">
+      <div style="position:relative;aspect-ratio:4/5;border-radius:20px;overflow:hidden;background:#0F141C">
+        <img src="/altemir/img/altemir.jpg" alt="Altemir Rocha, fundador do IBRACIV" style="position:absolute;inset:-2px;width:calc(100% + 4px);height:calc(100% + 4px);object-fit:cover;object-position:50% 50%;display:block" />
+        <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,13,18,0) 42%, rgba(10,13,18,.75) 100%)"></div>
+        <img src="/altemir/img/ibraciv-white.png" alt="" style="position:absolute;left:clamp(18px,5.5%,32px);bottom:clamp(16px,4.5%,28px);width:clamp(96px,30%,148px);height:auto;opacity:.94;filter:drop-shadow(0 2px 10px rgba(0,0,0,.6));display:block" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:26px">
+        <h2 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(26px,3.4vw,42px);line-height:1.13;letter-spacing:-.02em;text-wrap:pretty">Desde 2017 eu formei mais de 10 mil corretores. Muito nome grande do mercado aprendeu comigo.</h2>
+        <p style="margin:0;font-size:18px;line-height:1.65;color:rgba(245,243,239,.75);text-wrap:pretty">Eu sou o Altemir Rocha, fundador do IBRACIV. O mercado tá cheio de gente que sobe no palco pra ensinar o que nunca fez na rua. Eu ensino o que vivi atendendo cliente, e acredito que a transformação grande no quanto você fatura só vem depois de uma transformação grande em quem você é.</p>
+        <p style="margin:0;font-size:18px;line-height:1.65;color:rgba(245,243,239,.75);text-wrap:pretty">No Gigantes eu não subo sozinho: divido o palco com o Daniel Zaboto e com alunos que já estão lá no topo, pra te mostrar a Escada inteira.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <div style="padding:11px 17px;border:1px solid rgba(227,190,115,.3);border-radius:999px;background:rgba(227,190,115,.07);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#E3BE73">Formando corretores desde 2017</div>
+          <div style="padding:11px 17px;border:1px solid rgba(227,190,115,.3);border-radius:999px;background:rgba(227,190,115,.07);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#E3BE73">+R$2 bilhões em vendas</div>
+          <div style="padding:11px 17px;border:1px solid rgba(227,190,115,.3);border-radius:999px;background:rgba(227,190,115,.07);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#E3BE73">+10 mil corretores formados</div>
+          <div style="padding:11px 17px;border:1px solid rgba(227,190,115,.3);border-radius:999px;background:rgba(227,190,115,.07);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#E3BE73">Fundador do IBRACIV</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= OS 2 DIAS ================= -->
+  <section data-gig-reveal-scope="" data-screen-label="Os 2 dias" style="position:relative;overflow:hidden;padding:100px 24px;background:#0A0D12;border-top:1px solid rgba(245,243,239,.07)">
+    <canvas data-gig-shader="" data-gig-tone="dark" aria-hidden="true" style="position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;opacity:.2"></canvas>
+    <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(48% 56% at 13% 30%, rgba(227,190,115,.11), transparent 70%), radial-gradient(48% 56% at 87% 66%, rgba(56,102,168,.15), transparent 70%)"></div>
+    <div style="position:relative;z-index:1;max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:48px">
+      <div style="display:flex;flex-direction:column;gap:22px;max-width:900px">
+        <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#E3BE73;padding:10px 16px;border:1px solid rgba(227,190,115,.3);border-radius:999px;align-self:flex-start;white-space:nowrap">Ocean Place · Balneário Camboriú</div>
+        <h2 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(27px,3.9vw,46px);line-height:1.12;letter-spacing:-.02em;text-wrap:pretty">Não é mais um evento de palestra. São 2 dias que mudam como você vende e quem você é.</h2>
+        <p style="margin:0;font-size:18px;line-height:1.7;color:rgba(245,243,239,.72);max-width:820px;text-wrap:pretty">Dois dias inteiros que começam oito da manhã e vão até duas da madrugada, com a sala inteira na mesma intensidade, do primeiro ao último minuto. Não é palestrante subindo no palco pra vender livro. É imersão de verdade, onde você vê corretor destravar venda ao vivo depois de uma troca de ideias, e gente que saiu do zero subir no palco pra pegar prêmio de 1 milhão em comissão na frente de todo mundo.</p>
+      </div>
+
+      <div data-gig-carrossel="" style="position:relative;width:100vw;margin-left:calc(50% - 50vw);display:flex;flex-direction:column;align-items:center;gap:22px">
+        <div data-gig-palco="" style="position:relative;width:100%;height:calc(var(--gigC) * var(--gigH));touch-action:pan-y">
+          <sc-for list="{{ fotos }}" as="f" hint-placeholder-count="4">
+            <figure role="button" tabindex="0" aria-label="{{ f.alt }}" onClick="{{ f.ir }}" onKeyDown="{{ f.tecla }}" style="position:absolute;left:50%;top:var(--gigT);width:var(--gigC);height:var(--gigC);margin:0;border-radius:clamp(14px,1.5vw,24px);overflow:hidden;background:#0F141C;border:1px solid rgba(245,243,239,.1);box-shadow:0 38px 74px -32px rgba(0,0,0,.95);cursor:pointer;transform:{{ f.tf }};z-index:{{ f.z }};opacity:{{ f.op }};pointer-events:{{ f.pe }};transition:transform 900ms cubic-bezier(.4,0,.2,1), opacity 900ms cubic-bezier(.4,0,.2,1), z-index 900ms cubic-bezier(.4,0,.2,1)">
+              <img data-foto="{{ f.arq }}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none" />
+              <span aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,13,18,0) 55%, rgba(10,13,18,.5) 100%);opacity:{{ f.veu }};transition:opacity 900ms cubic-bezier(.4,0,.2,1)"></span>
+            </figure>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:18px">
+          <button type="button" aria-label="Foto anterior" onClick="{{ carAnterior }}" data-gig-seta="" style="flex:none;width:46px;height:46px;border-radius:999px;border:1px solid rgba(245,243,239,.18);background:rgba(245,243,239,.05);color:#F5F3EF;font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .35s, border-color .35s, transform .35s">&#8249;</button>
+          <div style="display:flex;align-items:center;gap:8px">
+            <sc-for list="{{ fotos }}" as="f" hint-placeholder-count="4">
+              <button type="button" aria-label="{{ f.alt }}" onClick="{{ f.ir }}" style="height:8px;width:{{ f.pontoW }};padding:0;border:0;border-radius:999px;background:{{ f.pontoCor }};cursor:pointer;transition:width .5s cubic-bezier(.22,.61,.36,1), background .5s"></button>
+            </sc-for>
+          </div>
+          <button type="button" aria-label="Próxima foto" onClick="{{ carProximo }}" data-gig-seta="" style="flex:none;width:46px;height:46px;border-radius:999px;border:1px solid rgba(245,243,239,.18);background:rgba(245,243,239,.05);color:#F5F3EF;font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .35s, border-color .35s, transform .35s">&#8250;</button>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:#E3BE73">O que você vive lá dentro</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px">
+          <div style="display:flex;gap:14px;align-items:flex-start;padding:22px 24px;border-radius:14px;background:rgba(245,243,239,.04);border:1px solid rgba(245,243,239,.09)">
+            <div style="flex:none;width:8px;height:8px;border-radius:999px;background:#E3BE73;margin-top:9px"></div>
+            <p style="margin:0;font-size:17px;line-height:1.5;color:rgba(245,243,239,.88)">Conduzir o cliente até o fechamento, sem pressão.</p>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;padding:22px 24px;border-radius:14px;background:rgba(245,243,239,.04);border:1px solid rgba(245,243,239,.09)">
+            <div style="flex:none;width:8px;height:8px;border-radius:999px;background:#E3BE73;margin-top:9px"></div>
+            <p style="margin:0;font-size:17px;line-height:1.5;color:rgba(245,243,239,.88)">Montar uma imobiliária redonda, que roda sem depender de você.</p>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;padding:22px 24px;border-radius:14px;background:rgba(245,243,239,.04);border:1px solid rgba(245,243,239,.09)">
+            <div style="flex:none;width:8px;height:8px;border-radius:999px;background:#E3BE73;margin-top:9px"></div>
+            <p style="margin:0;font-size:17px;line-height:1.5;color:rgba(245,243,239,.88)">Fazer sua equipe vestir a camisa e bater meta todo mês.</p>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;padding:22px 24px;border-radius:14px;background:rgba(245,243,239,.04);border:1px solid rgba(245,243,239,.09)">
+            <div style="flex:none;width:8px;height:8px;border-radius:999px;background:#E3BE73;margin-top:9px"></div>
+            <p style="margin:0;font-size:17px;line-height:1.5;color:rgba(245,243,239,.88)">Se posicionar como autoridade e responder as perguntas difíceis sem perder a venda.</p>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;padding:22px 24px;border-radius:14px;background:rgba(245,243,239,.04);border:1px solid rgba(245,243,239,.09)">
+            <div style="flex:none;width:8px;height:8px;border-radius:999px;background:#E3BE73;margin-top:9px"></div>
+            <p style="margin:0;font-size:17px;line-height:1.5;color:rgba(245,243,239,.88)">Destravar o que te prende no meio do morro faz anos.</p>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin:0;font-family:'Sora',sans-serif;font-weight:600;font-size:clamp(20px,2.3vw,28px);line-height:1.35;letter-spacing:-.015em;max-width:840px;color:#F5F3EF;text-wrap:pretty">É o tipo de sala onde você entra achando que fechar duas vendas no mês tá bom, e sai sabendo que <span style="color:#E3BE73">dava pra fazer isso numa semana.</span></p>
+    </div>
+  </section>
+
+  <!-- ================= OFERTA ================= -->
+  <section id="oferta" data-screen-label="Oferta" style="padding:100px 24px;background:linear-gradient(180deg,#F4F1EA,#E9E3D6);color:#111820;position:relative">
+    <div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:48px">
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:900px">
+        <h2 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(27px,3.9vw,46px);line-height:1.12;letter-spacing:-.02em;text-wrap:pretty">Escolha como você vai viver os dias 15 e 16 de outubro em Balneário Camboriú.</h2>
+        <p style="margin:0;font-size:19px;line-height:1.65;color:rgba(17,24,32,.72);max-width:780px;text-wrap:pretty">O que você aprende nesses dois dias trabalha pra você nos próximos dez anos de carreira. É o tipo de investimento que uma única venda a mais já cobre.</p>
+        
+      </div>
+
+      <div style="position:relative">
+        <div data-gig-keep="" aria-hidden="true" style="position:absolute;inset:-6% -4%;pointer-events:none;filter:blur(70px);opacity:.85;background:radial-gradient(38% 62% at 18% 42%, rgba(227,190,115,.75), transparent 70%), radial-gradient(34% 58% at 50% 62%, rgba(240,40,30,.42), transparent 72%), radial-gradient(40% 66% at 84% 38%, rgba(200,150,60,.6), transparent 70%);animation:gigFloat 18s ease-in-out infinite"></div>
+        <div style="position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px;align-items:stretch">
+        <div style="position:relative;background:rgba(255,255,255,.5);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border:1px solid rgba(255,255,255,.75);border-radius:20px;padding:34px 30px;display:flex;flex-direction:column;gap:22px;box-shadow:0 10px 40px -14px rgba(17,24,32,.18);transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s,background .45s" style-hover="transform:translateY(-6px);background:rgba(255,255,255,.66);box-shadow:0 34px 66px -30px rgba(17,24,32,.3)">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(22px,2.2vw,28px);letter-spacing:-.02em">PASSAPORTE LIGHT</div>
+          </div>
+          <p style="margin:0;font-size:17px;line-height:1.55;color:rgba(17,24,32,.72)">Os <b style="color:#8A6A2A;font-weight:600">2 dias completos de imersão</b>, com todo o conteúdo do evento.</p>
+          <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:26px;border-top:1px solid rgba(17,24,32,.09)">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(17,24,32,.55)">Valor do {{ loteLight }}</div>
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(30px,3.2vw,40px);line-height:1;letter-spacing:-.03em;white-space:nowrap;color:#111820">{{ priceLight }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;align-items:stretch">
+            <a href="{{ ctaLight }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;padding:19px 24px;border-radius:999px;border:1px solid rgba(17,24,32,.35);color:rgba(17,24,32,.8);font-family:'Sora',sans-serif;font-weight:600;font-size:15.5px" style-hover="border-color:#111820;color:#111820;background:rgba(17,24,32,.05)">GARANTIR LIGHT</a>
+            <div style="text-align:center;font-size:13.5px;color:rgba(17,24,32,.62)">Parcelável no checkout.</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(17,24,32,.72);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);color:#F5F3EF;border:1px solid rgba(227,190,115,.5);border-radius:20px;padding:34px 30px;display:flex;flex-direction:column;gap:22px;box-shadow:0 40px 80px -34px rgba(17,24,32,.55), inset 0 1px 0 rgba(255,255,255,.12);position:relative">
+          <div style="position:absolute;top:-13px;left:30px;padding:7px 15px;border-radius:999px;background:#E3BE73;color:#0A0D12;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;white-space:nowrap">Mais escolhido</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(22px,2.2vw,28px);letter-spacing:-.02em">PASSAPORTE PREMIUM</div>
+          </div>
+          <p style="margin:0;font-size:17px;line-height:1.55;color:rgba(245,243,239,.78)">Os 2 dias <b style="color:#E3BE73;font-weight:600">mais perto do palco</b>, com <b style="color:#E3BE73;font-weight:600">apostila completa</b>, <b style="color:#E3BE73;font-weight:600">grupo VIP no WhatsApp</b> e acesso às mesas do evento.</p>
+          <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:26px;border-top:1px solid rgba(245,243,239,.14)">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,243,239,.55)">Valor do {{ lotePremium }}</div>
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(30px,3.2vw,40px);line-height:1;letter-spacing:-.03em;white-space:nowrap;color:#E3BE73;text-shadow:0 0 34px rgba(227,190,115,.35)">{{ pricePremium }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;align-items:stretch">
+            <a href="{{ ctaPremium }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;padding:19px 24px;border-radius:999px;isolation:isolate;--ga:0deg;--gao:0deg;--gp:5%;--gs:#ffffff;position:relative;overflow:hidden;outline-offset:4px;border:1px solid transparent;color:#F3DFAE;white-space:nowrap;background:linear-gradient(#1B212B,#12161D) padding-box, conic-gradient(from calc(var(--ga) - var(--gao)), transparent, #E3BE73 var(--gp), var(--gs) calc(var(--gp) * 2), #E3BE73 calc(var(--gp) * 3), transparent calc(var(--gp) * 4)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 18px 40px -20px rgba(0,0,0,.85);animation:gigAngle 3s linear infinite;transition:--gao 800ms cubic-bezier(.25,1,.5,1),--gp 800ms cubic-bezier(.25,1,.5,1),--gs 800ms cubic-bezier(.25,1,.5,1);font-family:'Sora',sans-serif;font-weight:700;font-size:16px" style-before="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:inherit;opacity:.4;background:radial-gradient(circle at 2px 2px, #fff .5px, transparent 0) padding-box;background-size:4px 4px;background-repeat:space;mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000);-webkit-mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000)" style-after="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:100%;aspect-ratio:1;opacity:.42;background:linear-gradient(-50deg, transparent, #E3BE73, transparent);mask-image:radial-gradient(circle at bottom, transparent 40%, #000);-webkit-mask-image:radial-gradient(circle at bottom, transparent 40%, #000);animation:gigShimmer 3s linear infinite" style-hover="--gp:20%;--gao:95deg;--gs:#F0D9A5">GARANTIR PREMIUM</a>
+            <div style="text-align:center;font-size:13.5px;color:rgba(245,243,239,.55)">Parcelável no checkout.</div>
+          </div>
+        </div>
+
+        <div style="position:relative;background:rgba(255,255,255,.5);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border:1px solid rgba(255,255,255,.75);border-radius:20px;padding:34px 30px;display:flex;flex-direction:column;gap:22px;box-shadow:0 10px 40px -14px rgba(17,24,32,.18);transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s,background .45s" style-hover="transform:translateY(-6px);background:rgba(255,255,255,.66);box-shadow:0 34px 66px -30px rgba(17,24,32,.3)">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(22px,2.2vw,28px);letter-spacing:-.02em">EXPERIÊNCIA ALTO PADRÃO</div>
+          </div>
+          <p style="margin:0;font-size:17px;line-height:1.55;color:rgba(17,24,32,.72)">Os 2 dias, mais um <b style="color:#8A6A2A;font-weight:600">3º dia fechado só pra esse grupo</b>, com o Altemir e o <b style="color:#8A6A2A;font-weight:600">Daniel Zaboto</b> ensinando a ler pessoas em 10 minutos e conduzir qualquer cliente ao fechamento. Inclui <b style="color:#8A6A2A;font-weight:600">lounge exclusivo</b>, <b style="color:#8A6A2A;font-weight:600">all inclusive</b> e a <b style="color:#8A6A2A;font-weight:600">caneca dourada</b> que só quem está aqui leva.</p>
+          <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:26px;border-top:1px solid rgba(17,24,32,.09)">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(17,24,32,.55)">Valor do {{ loteAlto }}</div>
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(30px,3.2vw,40px);line-height:1;letter-spacing:-.03em;white-space:nowrap;color:#111820">{{ priceAlto }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;align-items:stretch">
+            <a href="{{ ctaAlto }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;padding:19px 24px;border-radius:999px;border:1px solid rgba(17,24,32,.35);color:rgba(17,24,32,.8);font-family:'Sora',sans-serif;font-weight:600;font-size:15.5px" style-hover="border-color:#111820;color:#111820;background:rgba(17,24,32,.05)">GARANTIR ALTO PADRÃO</a>
+            <div style="text-align:center;font-size:13.5px;color:rgba(17,24,32,.62)">Parcelável no checkout.</div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <p style="margin:0;padding:24px 28px;border-radius:16px;border:1px dashed rgba(17,24,32,.25);font-size:17px;line-height:1.6;color:rgba(17,24,32,.75);text-align:center">Vai levar a equipe? Pra grupos de 5 ou mais, <a href="{{ ctaGrupo }}" target="_blank" rel="noopener" style="color:#8A6A2A;border-bottom:1px solid rgba(138,106,42,.4)">fale com o nosso time</a> e garanta a condição.</p>
+    </div>
+  </section>
+
+  <!-- ================= ÚLTIMA CHAMADA ================= -->
+  <section data-gig-reveal-scope="" data-screen-label="Ultima chamada" style="position:relative;overflow:hidden;padding:100px 24px;background:radial-gradient(100% 80% at 50% 0%, #1A1116 0%, #0A0D12 60%)">
+    <div aria-hidden="true" style="position:absolute;bottom:-160px;right:-70px;width:540px;height:540px;pointer-events:none;border-radius:999px;background:radial-gradient(circle, rgba(240,40,30,.17), transparent 66%);filter:blur(30px);animation:gigFloat 21s ease-in-out infinite"></div>
+    <div aria-hidden="true" style="position:absolute;top:-150px;left:-90px;width:480px;height:480px;pointer-events:none;border-radius:999px;background:radial-gradient(circle, rgba(227,190,115,.13), transparent 68%);filter:blur(28px);animation:gigFloat 25s ease-in-out infinite reverse"></div>
+    <div style="position:relative;z-index:1;max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:44px">
+      <div style="display:flex;flex-direction:column;gap:22px">
+        
+        <h2 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(27px,3.9vw,46px);line-height:1.12;letter-spacing:-.02em;text-wrap:pretty">Ano passado, 45 pessoas ficaram na fila de espera do lado de fora. Essa é a 5ª edição.</h2>
+        <p style="margin:0;font-size:19px;line-height:1.65;color:rgba(245,243,239,.75);max-width:780px;text-wrap:pretty">As quatro edições anteriores esgotaram. O Ocean Place tem um limite de lugares, e o lote atual é sempre o melhor preço que vai existir.</p>
+        <p style="margin:0;font-size:19px;line-height:1.65;color:rgba(245,243,239,.75);max-width:780px;text-wrap:pretty">Cada mês subindo no facão é comissão que fica na mesa e cliente que fecha com o corretor do lado, o que já aprendeu a conduzir.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div style="padding:26px 14px;border-radius:16px;background:rgba(245,243,239,.05);border:1px solid rgba(245,243,239,.11);text-align:center">
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(28px,4.4vw,48px);letter-spacing:-.03em;color:#E3BE73">{{ cdDays }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,243,239,.55);margin-top:6px">dias</div>
+        </div>
+        <div style="padding:26px 14px;border-radius:16px;background:rgba(245,243,239,.05);border:1px solid rgba(245,243,239,.11);text-align:center">
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(28px,4.4vw,48px);letter-spacing:-.03em;color:#E3BE73">{{ cdHours }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,243,239,.55);margin-top:6px">horas</div>
+        </div>
+        <div style="padding:26px 14px;border-radius:16px;background:rgba(245,243,239,.05);border:1px solid rgba(245,243,239,.11);text-align:center">
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(28px,4.4vw,48px);letter-spacing:-.03em;color:#E3BE73">{{ cdMin }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,243,239,.55);margin-top:6px">minutos</div>
+        </div>
+        <div style="padding:26px 14px;border-radius:16px;background:rgba(245,243,239,.05);border:1px solid rgba(245,243,239,.11);text-align:center">
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(28px,4.4vw,48px);letter-spacing:-.03em;color:#E3BE73">{{ cdSec }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,243,239,.55);margin-top:6px">segundos</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,243,239,.6)">
+          <span>Vagas do {{ loteAtual }}</span>
+          <span style="color:#E3BE73">{{ vagasLabel }}</span>
+        </div>
+        <div style="height:10px;border-radius:999px;background:rgba(245,243,239,.1);overflow:hidden">
+          <div style="height:100%;width:{{ vagasWidth }};background:linear-gradient(90deg,#D7A94E,#F0281E);border-radius:999px"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+        <a href="#oferta" style="display:inline-flex;align-items:center;justify-content:center;padding:24px 44px;border-radius:999px;isolation:isolate;--ga:0deg;--gao:0deg;--gp:5%;--gs:#ffffff;position:relative;overflow:hidden;outline-offset:4px;border:1px solid transparent;color:#F3DFAE;white-space:nowrap;background:linear-gradient(#1B212B,#12161D) padding-box, conic-gradient(from calc(var(--ga) - var(--gao)), transparent, #E3BE73 var(--gp), var(--gs) calc(var(--gp) * 2), #E3BE73 calc(var(--gp) * 3), transparent calc(var(--gp) * 4)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 18px 40px -20px rgba(0,0,0,.85);animation:gigAngle 3s linear infinite;transition:--gao 800ms cubic-bezier(.25,1,.5,1),--gp 800ms cubic-bezier(.25,1,.5,1),--gs 800ms cubic-bezier(.25,1,.5,1);font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(13px,1.35vw,17px);text-align:center" style-before="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:inherit;opacity:.4;background:radial-gradient(circle at 2px 2px, #fff .5px, transparent 0) padding-box;background-size:4px 4px;background-repeat:space;mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000);-webkit-mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000)" style-after="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:100%;aspect-ratio:1;opacity:.42;background:linear-gradient(-50deg, transparent, #E3BE73, transparent);mask-image:radial-gradient(circle at bottom, transparent 40%, #000);-webkit-mask-image:radial-gradient(circle at bottom, transparent 40%, #000);animation:gigShimmer 3s linear infinite" style-hover="--gp:20%;--gao:95deg;--gs:#F0D9A5;transform:translateY(-2px)">GARANTIR MEU PASSAPORTE ANTES QUE ESGOTE</a>
+        <div style="font-size:14px;color:rgba(245,243,239,.62);text-align:center">O valor sobe a cada novo lote. Não há lote de última hora com desconto.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section data-gig-reveal-scope="" data-screen-label="FAQ" style="position:relative;overflow:hidden;padding:100px 24px;background:#0A0D12;border-top:1px solid rgba(245,243,239,.07)">
+    <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 66% at 50% 116%, rgba(227,190,115,.11), transparent 60%)"></div>
+    <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(245,243,239,.1) 1px, transparent 1px);background-size:34px 34px;mask-image:radial-gradient(70% 54% at 50% 46%, #000 0%, transparent 78%);-webkit-mask-image:radial-gradient(70% 54% at 50% 46%, #000 0%, transparent 78%);opacity:.6"></div>
+    <div style="position:relative;z-index:1;max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:40px">
+      <h2 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(25px,3.4vw,40px);line-height:1.15;letter-spacing:-.02em;text-wrap:pretty">Ainda com uma dúvida entre você e a sua virada de chave?</h2>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ faqs }}" as="item" hint-placeholder-count="7">
+          <div style="border:1px solid rgba(245,243,239,.12);border-radius:14px;background:rgba(245,243,239,.035);overflow:hidden">
+            <div role="button" tabindex="0" aria-expanded="{{ item.open }}" onKeyDown="{{ item.key }}" onClick="{{ item.toggle }}" style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 26px;cursor:pointer" style-hover="background:rgba(245,243,239,.045)">
+              <div style="font-family:'Sora',sans-serif;font-weight:600;font-size:clamp(16px,1.6vw,19px);line-height:1.4;color:#F5F3EF">{{ item.q }}</div>
+              <div style="flex:none;width:32px;height:32px;border-radius:999px;border:1px solid rgba(227,190,115,.4);color:#E3BE73;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:17px;line-height:1">{{ item.sign }}</div>
+            </div>
+            <sc-if value="{{ item.open }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:0;padding:0 26px 26px;font-size:17px;line-height:1.65;color:rgba(245,243,239,.72);max-width:680px;text-wrap:pretty">{{ item.a }}</p>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FECHAMENTO ================= -->
+  <section data-gig-reveal-scope="" data-screen-label="Fechamento" style="position:relative;padding:110px 24px;background:linear-gradient(180deg,#0A0D12,#101B2E)">
+    <div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:30px">
+      <div style="position:relative;width:100%;aspect-ratio:21/9;border-radius:18px;overflow:hidden;background:#0A121F">
+        <img src="/altemir/img/impacto.jpg" alt="Altemir Rocha no palco do Gigantes" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 42%;display:block" />
+        <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,13,18,.1) 0%, rgba(10,13,18,.35) 62%, rgba(16,27,46,.85) 100%)"></div>
+      </div>
+      <h2 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(28px,4.2vw,50px);line-height:1.1;letter-spacing:-.025em;text-wrap:pretty">Daqui a um ano você vai estar num dos dois lados dessa história.</h2>
+      <p style="margin:0;font-size:19px;line-height:1.65;color:rgba(245,243,239,.75);max-width:740px;text-wrap:pretty">A Escada existe. Ela sempre esteve ali, do outro lado do morro que você sobe no facão faz anos. Nos dias 15 e 16 de outubro, em Balneário Camboriú, eu te mostro ela inteira.</p>
+      <p style="margin:0;font-family:'Sora',sans-serif;font-weight:600;font-size:clamp(19px,2.2vw,26px);line-height:1.35;color:#E3BE73;max-width:740px;text-wrap:pretty">Virar a chave esse ano, ou seguir cortando mato. Quem decide é você, agora.</p>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:8px">
+        <a href="#oferta" style="display:inline-flex;align-items:center;justify-content:center;padding:24px 50px;border-radius:999px;isolation:isolate;--ga:0deg;--gao:0deg;--gp:5%;--gs:#ffffff;position:relative;overflow:hidden;outline-offset:4px;border:1px solid transparent;color:#F3DFAE;white-space:nowrap;background:linear-gradient(#1B212B,#12161D) padding-box, conic-gradient(from calc(var(--ga) - var(--gao)), transparent, #E3BE73 var(--gp), var(--gs) calc(var(--gp) * 2), #E3BE73 calc(var(--gp) * 3), transparent calc(var(--gp) * 4)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 18px 40px -20px rgba(0,0,0,.85);animation:gigAngle 3s linear infinite;transition:--gao 800ms cubic-bezier(.25,1,.5,1),--gp 800ms cubic-bezier(.25,1,.5,1),--gs 800ms cubic-bezier(.25,1,.5,1);font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(14px,1.5vw,19px)" style-before="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:inherit;opacity:.4;background:radial-gradient(circle at 2px 2px, #fff .5px, transparent 0) padding-box;background-size:4px 4px;background-repeat:space;mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000);-webkit-mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000)" style-after="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:100%;aspect-ratio:1;opacity:.42;background:linear-gradient(-50deg, transparent, #E3BE73, transparent);mask-image:radial-gradient(circle at bottom, transparent 40%, #000);-webkit-mask-image:radial-gradient(circle at bottom, transparent 40%, #000);animation:gigShimmer 3s linear infinite" style-hover="--gp:20%;--gao:95deg;--gs:#F0D9A5;transform:translateY(-2px)">GARANTIR MEU PASSAPORTE</a>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,243,239,.55)">15 e 16 de outubro · Ocean Place · Balneário Camboriú</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer style="padding:56px 24px 132px;background:#080A0E;border-top:1px solid rgba(245,243,239,.08)">
+    <div style="max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <img src="/altemir/img/logo-white.png" alt="Gigantes do Mercado Imobiliário 2026" style="height:38px;width:auto;display:block;opacity:.85" />
+        <div style="font-size:15px;color:rgba(245,243,239,.62);line-height:1.7">IBRACIV<br />[CNPJ]<br />[contato]</div>
+      </div>
+      <div style="display:flex;gap:26px;flex-wrap:wrap;font-size:15px">
+        <a href="#">Política de privacidade</a>
+        <a href="#">Termos de uso</a>
+        <a href="{{ ctaTime }}" target="_blank" rel="noopener">Falar com o time</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= STICKY CTA ================= -->
+  <sc-if value="{{ showBar }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:0;right:0;bottom:0;z-index:50;padding:14px 20px;background:rgba(10,13,18,.92);backdrop-filter:blur(14px);border-top:1px solid rgba(227,190,115,.3);display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,243,239,.65)">15 e 16 de out · 2026 · lote atual aberto</div>
+      <a href="#oferta" style="display:inline-flex;align-items:center;justify-content:center;padding:14px 30px;border-radius:999px;isolation:isolate;--ga:0deg;--gao:0deg;--gp:5%;--gs:#ffffff;position:relative;overflow:hidden;outline-offset:4px;border:1px solid transparent;color:#F3DFAE;white-space:nowrap;background:linear-gradient(#1B212B,#12161D) padding-box, conic-gradient(from calc(var(--ga) - var(--gao)), transparent, #E3BE73 var(--gp), var(--gs) calc(var(--gp) * 2), #E3BE73 calc(var(--gp) * 3), transparent calc(var(--gp) * 4)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 18px 40px -20px rgba(0,0,0,.85);animation:gigAngle 3s linear infinite;transition:--gao 800ms cubic-bezier(.25,1,.5,1),--gp 800ms cubic-bezier(.25,1,.5,1),--gs 800ms cubic-bezier(.25,1,.5,1);font-family:'Sora',sans-serif;font-weight:700;font-size:14.5px" style-before="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:inherit;opacity:.4;background:radial-gradient(circle at 2px 2px, #fff .5px, transparent 0) padding-box;background-size:4px 4px;background-repeat:space;mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000);-webkit-mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000)" style-after="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:100%;aspect-ratio:1;opacity:.42;background:linear-gradient(-50deg, transparent, #E3BE73, transparent);mask-image:radial-gradient(circle at bottom, transparent 40%, #000);-webkit-mask-image:radial-gradient(circle at bottom, transparent 40%, #000);animation:gigShimmer 3s linear infinite" style-hover="--gp:20%;--gao:95deg;--gs:#F0D9A5">GARANTIR MEU PASSAPORTE</a>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;priceLight&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;[campo dinâmico]&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Oferta&quot;},&quot;pricePremium&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;[campo dinâmico]&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Oferta&quot;},&quot;priceAlto&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;[campo dinâmico]&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Oferta&quot;},&quot;vagasPreenchidas&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:78,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Escassez&quot;}}">
+class Component extends DCLogic {
+  state = { open: 0, now: Date.now(), showBar: false, foto: 0 };
+
+  componentDidMount() {
+    this.t = setInterval(() => this.setState({ now: Date.now() }), 1000);
+    this.onScroll = () => {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      const should = y > 900;
+      if (should !== this.state.showBar) this.setState({ showBar: should });
+    };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+
+    // orçamento de movimento: no mobile, corta os efeitos pesados (blur/halos/grão)
+    this.trimMobile = () => {
+      const small = window.innerWidth < 700;
+      document.querySelectorAll('[aria-hidden="true"]').forEach(el => {
+        const cs = getComputedStyle(el);
+        const isPhoto = cs.backgroundImage.includes('fundo.png');
+        const blurred = cs.filter !== 'none' && cs.filter.includes('blur');
+        const grain = cs.mixBlendMode === 'overlay';
+        const keep = el.hasAttribute('data-gig-keep');
+        if (isPhoto) {
+          // a foto do hero permanece no mobile; o blur é do CSS, aqui só alivia o custo
+          el.style.opacity = small ? '.6' : '';
+        } else if (!keep && (blurred || grain)) {
+          el.style.display = small ? 'none' : '';
+        }
+        if (cs.backgroundSize.startsWith('76px')) el.style.opacity = small ? '.5' : '1';
+      });
+    };
+    this.trimMobile();
+    window.addEventListener('resize', this.trimMobile);
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const targets = [];
+      document.querySelectorAll('[data-gig-reveal-scope]').forEach(sec => {
+        const wrap = sec.querySelector(':scope > div:last-of-type') || sec;
+        Array.from(wrap.children).forEach(el => {
+          // listas marcadas revelam item a item, e nao como bloco unico
+          if (el.hasAttribute('data-gig-stagger')) Array.from(el.children).forEach(c => targets.push(c));
+          else targets.push(el);
+        });
+      });
+      targets.forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(22px)';
+        el.style.transition = 'opacity .8s cubic-bezier(.2,.8,.2,1) ' + Math.min(i % 6, 5) * 60 + 'ms, transform .8s cubic-bezier(.2,.8,.2,1) ' + Math.min(i % 6, 5) * 60 + 'ms';
+      });
+      this.io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'none';
+            this.io.unobserve(e.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.05 });
+      targets.forEach(el => this.io.observe(el));
+    }
+
+    // depoimentos: so carrega o player da Wistia quando o visitante clica na capa
+    this.tocarVideo = e => {
+      const capa = e.target.closest && e.target.closest('[data-gig-video]');
+      if (!capa || capa.hasAttribute('data-gig-loaded')) return;
+      e.preventDefault();
+      capa.setAttribute('data-gig-loaded', '');
+      const id = capa.getAttribute('data-gig-video');
+      const frame = document.createElement('iframe');
+      frame.src = 'https://fast.wistia.net/embed/iframe/' + id + '?autoPlay=1&playerColor=E3BE73';
+      frame.title = 'Depoimento de ' + (capa.getAttribute('data-gig-nome') || '');
+      frame.allow = 'autoplay; fullscreen; picture-in-picture';
+      frame.setAttribute('allowfullscreen', '');
+      capa.replaceChildren(frame);
+    };
+    document.addEventListener('click', this.tocarVideo);
+
+    // carrossel: anda sozinho, e so para enquanto o visitante esta mexendo nele
+    this.tCarrossel = setInterval(() => {
+      const n = this.fotos().length;
+      if (n < 2 || this.carParado) return;
+      if (Date.now() - (this.carMexido || 0) < 9000) return;
+      this.setState(st => ({ foto: (st.foto + 1) % n }));
+    }, 4500);
+
+    // o caminho da foto chega pelo data-attr; passa pro src so depois que o
+    // template preencheu, senao o navegador busca o "{{ ... }}" cru e toma 404
+    this.ligarFotos = () => {
+      let faltou = false;
+      document.querySelectorAll('[data-gig-palco] img[data-foto]').forEach(im => {
+        const caminho = im.getAttribute('data-foto') || '';
+        if (caminho.indexOf('{{') >= 0) { faltou = true; return; }
+        if (caminho && im.getAttribute('src') !== caminho) im.setAttribute('src', caminho);
+      });
+      if (faltou) requestAnimationFrame(this.ligarFotos);
+    };
+    this.ligarFotos();
+
+    const palco = document.querySelector('[data-gig-palco]');
+    if (palco) {
+      this.carEntrou = () => { this.carParado = true; };
+      this.carSaiu = () => { this.carParado = false; };
+      palco.addEventListener('pointerenter', this.carEntrou);
+      palco.addEventListener('pointerleave', this.carSaiu);
+      // arrastar pro lado troca a foto (celular e trackpad)
+      let x0 = null;
+      this.carDesce = e => { x0 = e.clientX; };
+      this.carSobe = e => {
+        if (x0 === null) return;
+        const d = e.clientX - x0;
+        x0 = null;
+        if (Math.abs(d) < 40) return;
+        const n = this.fotos().length;
+        this.carMexido = Date.now();
+        this.setState(st => ({ foto: (st.foto + (d < 0 ? 1 : -1) + n) % n }));
+      };
+      palco.addEventListener('pointerdown', this.carDesce);
+      palco.addEventListener('pointerup', this.carSobe);
+      palco.addEventListener('pointercancel', () => { x0 = null; });
+    }
+
+    this.initMarquee();
+
+    this.initShaders();
+  }
+
+  // ---- fundo "Neuro Noise" (WebGL1, sem biblioteca) -------------------------
+  // Adaptado de Paper Shaders: https://shaders.paper.design/neuro-noise
+  // Licenca Apache-2.0: https://github.com/paper-design/shaders
+  fsSource() {
+    return `// "Neuro Noise" - made with the 21st.dev Shader Builder
+// Adapted from Paper Shaders: https://shaders.paper.design/neuro-noise
+// Licensed under Apache-2.0: https://github.com/paper-design/shaders
+
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+
+uniform vec3 u_colors[8];
+// Seven packed vectors + eight colour vectors = 15 fragment uniform vectors,
+// one below WebGL1's guaranteed minimum. Macros preserve the public u_* API.
+uniform vec4 u_scene;      // resolution.xy, time, colour count
+uniform vec4 u_shape;      // scale, intensity, paramA, warp
+uniform vec4 u_surface;    // detail, contrast, brightness, saturation
+uniform vec4 u_finish;     // hue, vignette, blur, grain
+uniform vec4 u_transform;  // seed, rotation, drift, OKLab toggle
+uniform vec4 u_space;      // offset.xy, pointer.xy
+uniform vec4 u_cursor;
+
+#define u_resolution u_scene.xy
+#define u_time u_scene.z
+#define u_colorCount u_scene.w
+#define u_scale u_shape.x
+#define u_intensity u_shape.y
+#define u_paramA u_shape.z
+#define u_warp u_shape.w
+#define u_detail u_surface.x
+#define u_contrast u_surface.y
+#define u_brightness u_surface.z
+#define u_saturation u_surface.w
+#define u_hue u_finish.x
+#define u_vignette u_finish.y
+#define u_blur u_finish.z
+#define u_grain u_finish.w
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+#define u_seed u_transform.x
+#else
+// Keep hash inputs inside mediump's guaranteed range.
+#define u_seed mod(u_transform.x, 31.0)
+#endif
+#define u_rotate u_transform.y
+#define u_drift u_transform.z
+#define u_oklab u_transform.w
+#define u_offset u_space.xy
+#define u_mouse u_space.zw
+#define u_cursorPresence u_cursor.x
+#define u_cursorEffect u_cursor.y
+#define u_cursorStrength u_cursor.z
+#define u_cursorRadius u_cursor.w
+
+float hash21(vec2 p) {
+#ifndef GL_FRAGMENT_PRECISION_HIGH
+  p = mod(p, 31.0);
+#endif
+  p = fract(p * vec2(234.34, 435.345));
+  p += dot(p, p + 34.23);
+  return fract(p.x * p.y);
+}
+
+// Even, un-structured white noise for film grain (Dave Hoskins hash12). The
+// multiply hash above is fine for value noise but shows a faint axis-aligned
+// mesh at integer fragment coords, which reads as a net over flat areas.
+float grainHash(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+vec2 hash22(vec2 p) {
+#ifndef GL_FRAGMENT_PRECISION_HIGH
+  p = mod(p, 31.0);
+#endif
+  float n = sin(dot(p, vec2(41.0, 289.0)));
+  return fract(vec2(15731.743, 7892.321) * n);
+}
+
+float noise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(
+    mix(hash21(i), hash21(i + vec2(1.0, 0.0)), u.x),
+    mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), u.x),
+    u.y);
+}
+
+float fbm(vec2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 5; i++) {
+    v += a * noise(p);
+    p = p * 2.03 + vec2(17.0, 9.2);
+    a *= 0.5;
+  }
+  return v;
+}
+
+// --- OKLab colour mixing (perceptual), gated by u_oklab ---
+vec3 srgbToLinear(vec3 c) {
+  return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)),
+    step(0.04045, c));
+}
+vec3 linearToSrgb(vec3 c) {
+  // max() guards the sRGB branch: out-of-gamut OKLab interpolations can send a
+  // channel negative, and pow(negative, x) is NaN which mix()/step() would
+  // then propagate. The linear branch clips such channels to 0 downstream.
+  return mix(c * 12.92, 1.055 * pow(max(c, vec3(0.0)), vec3(1.0 / 2.4)) - 0.055,
+    step(0.0031308, c));
+}
+vec3 linToOklab(vec3 c) {
+  float l = 0.4122214708 * c.r + 0.5363325363 * c.g + 0.0514459929 * c.b;
+  float m = 0.2119034982 * c.r + 0.6806995451 * c.g + 0.1073969566 * c.b;
+  float s = 0.0883024619 * c.r + 0.2817188376 * c.g + 0.6299787005 * c.b;
+  l = pow(max(l, 0.0), 1.0 / 3.0);
+  m = pow(max(m, 0.0), 1.0 / 3.0);
+  s = pow(max(s, 0.0), 1.0 / 3.0);
+  return vec3(
+    0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s);
+}
+vec3 oklabToLin(vec3 c) {
+  float l = c.x + 0.3963377774 * c.y + 0.2158037573 * c.z;
+  float m = c.x - 0.1055613458 * c.y - 0.0638541728 * c.z;
+  float s = c.x - 0.0894841775 * c.y - 1.2914855480 * c.z;
+  l = l * l * l; m = m * m * m; s = s * s * s;
+  return vec3(
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s);
+}
+vec3 mixColour(vec3 a, vec3 b, float t) {
+  if (u_oklab > 0.5) {
+    vec3 la = linToOklab(srgbToLinear(a));
+    vec3 lb = linToOklab(srgbToLinear(b));
+    return clamp(linearToSrgb(oklabToLin(mix(la, lb, t))), 0.0, 1.0);
+  }
+  return mix(a, b, t);
+}
+
+// Mix through the recipe colours; x is clamped to 0..1. WebGL1 forbids
+// dynamic uniform indexing in fragment shaders, hence the constant loop.
+vec3 palette(float x) {
+  float n = max(u_colorCount - 1.0, 1.0);
+  float f = clamp(x, 0.0, 1.0) * n;
+  vec3 col = u_colors[0];
+  for (int i = 0; i < 7; i++) {
+    if (float(i) < n)
+      col = mixColour(col, u_colors[i + 1],
+        smoothstep(0.0, 1.0, clamp(f - float(i), 0.0, 1.0)));
+  }
+  return col;
+}
+
+vec3 hueRotate(vec3 col, float a) {
+  const mat3 toYIQ = mat3(0.299, 0.596, 0.211,
+                          0.587, -0.274, -0.523,
+                          0.114, -0.322, 0.312);
+  const mat3 toRGB = mat3(1.0, 1.0, 1.0,
+                          0.956, -0.272, -1.106,
+                          0.621, -0.647, 1.703);
+  vec3 yiq = toYIQ * col;
+  float ca = cos(a), sa = sin(a);
+  yiq = vec3(yiq.x, yiq.y * ca - yiq.z * sa, yiq.y * sa + yiq.z * ca);
+  return toRGB * yiq;
+}
+
+vec3 shade(vec2 uv, vec2 p, float t) {
+  vec2 q = p * (1.6 + u_intensity * 2.4);
+  float field = 0.0;
+  float weight = 0.55;
+  for (int i = 0; i < 6; i++) {
+    float fi = float(i);
+    q += vec2(
+      sin(q.y * (1.7 + fi * 0.09) + t * (0.35 + fi * 0.04) + u_seed),
+      cos(q.x * (1.5 + fi * 0.11) - t * (0.28 + fi * 0.03))
+    ) * (0.22 + u_intensity * 0.14);
+    float filaments = abs(sin(q.x + q.y + fi * 0.72));
+    field += weight / (0.08 + filaments);
+    weight *= 0.62;
+    q = q.yx * vec2(-1.08, 1.04);
+  }
+  float glow = 1.0 - exp(-field * (0.018 + u_paramA * 0.04));
+  return palette(clamp(glow, 0.0, 1.0));
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  vec2 screenUv = uv;
+  vec2 p = (gl_FragCoord.xy - 0.5 * u_resolution.xy)
+    / min(u_resolution.x, u_resolution.y);
+  float cursorMask = 0.0;
+
+  // Cursor modes 1-3 are local distortions. Push shifts the same screen-space
+  // coordinates before field transforms, so Zoom/Rotate do not change its feel.
+  if (u_cursorPresence > 0.001) {
+    // u_mouse is normalized to -1..1 in canvas space. Convert it to the same
+    // aspect-corrected screen space as p so effects stay under the cursor.
+    vec2 cursor = (0.5 * u_mouse * u_resolution.xy)
+      / min(u_resolution.x, u_resolution.y);
+    vec2 cursorDelta = p - cursor;
+    if (u_cursorEffect < 0.5) {
+      p += cursor * u_cursorPresence * u_cursorStrength * 0.55;
+    } else {
+      float cursorDistance = length(cursorDelta);
+      vec2 cursorDirection = cursorDelta / max(cursorDistance, 0.0001);
+      cursorMask = u_cursorPresence
+        * (1.0 - smoothstep(0.0, u_cursorRadius, cursorDistance));
+      if (u_cursorEffect < 1.5) {
+        p -= cursorDirection * cursorMask * u_cursorStrength * 0.24;
+      } else if (u_cursorEffect < 2.5) {
+        float cursorAngle = cursorMask * u_cursorStrength * 2.2;
+        float cc = cos(cursorAngle), cs = sin(cursorAngle);
+        p = cursor + mat2(cc, -cs, cs, cc) * cursorDelta;
+      } else if (u_cursorEffect < 3.5) {
+        float ripple = sin(
+          cursorDistance / max(u_cursorRadius, 0.001) * 18.0 - u_time * 5.0);
+        p -= cursorDirection * ripple * cursorMask * u_cursorStrength * 0.07;
+      }
+    }
+  }
+
+  // Keep presets that read uv (rather than p) in the same warped space.
+  uv = p * min(u_resolution.x, u_resolution.y) / u_resolution.xy + 0.5;
+  p *= u_scale;
+  // Field transform: rotate, pan, pointer push, slow drift.
+  if (abs(u_rotate) > 0.0001) {
+    float cr = cos(u_rotate), sr = sin(u_rotate);
+    p = mat2(cr, -sr, sr, cr) * p;
+  }
+  p += u_offset;
+  if (u_drift > 0.0001)
+    p += u_drift * vec2(sin(u_time * 0.31), cos(u_time * 0.23));
+  // Organic domain warp.
+  if (u_warp > 0.0) {
+    p += u_warp * (vec2(
+      fbm(p * u_detail + u_seed),
+      fbm(p * u_detail + vec2(5.2, 1.3))) - 0.5);
+  }
+  // Shade, with an optional soft 5-tap blur.
+  vec3 col;
+  if (u_blur > 0.0) {
+    float e = u_blur;
+    float pe = e * u_scale;
+    vec2 uvE = vec2(e) * min(u_resolution.x, u_resolution.y) / u_resolution.xy;
+    col  = shade(uv, p, u_time) * 0.36;
+    col += shade(uv + vec2(uvE.x, 0.0), p + vec2(pe, 0.0), u_time) * 0.16;
+    col += shade(uv - vec2(uvE.x, 0.0), p - vec2(pe, 0.0), u_time) * 0.16;
+    col += shade(uv + vec2(0.0, uvE.y), p + vec2(0.0, pe), u_time) * 0.16;
+    col += shade(uv - vec2(0.0, uvE.y), p - vec2(0.0, pe), u_time) * 0.16;
+  } else {
+    col = shade(uv, p, u_time);
+  }
+  // Post: contrast, saturation, hue, brightness, vignette, grain.
+  if (abs(u_contrast - 1.0) > 0.0001)
+    col = (col - 0.5) * u_contrast + 0.5;
+  if (abs(u_saturation - 1.0) > 0.0001) {
+    float luma = dot(col, vec3(0.299, 0.587, 0.114));
+    col = mix(vec3(luma), col, u_saturation);
+  }
+  if (abs(u_hue) > 0.0001)
+    col = hueRotate(col, u_hue);
+  if (abs(u_brightness) > 0.0001)
+    col += u_brightness;
+  if (u_vignette > 0.0001) {
+    float vd = length(screenUv - 0.5) * 1.41421356;
+    col *= 1.0 - u_vignette * smoothstep(0.35, 1.0, vd);
+  }
+  if (u_cursorPresence > 0.001 && u_cursorEffect > 3.5)
+    col += (vec3(0.18) + col * 0.12) * cursorMask * u_cursorStrength;
+  if (u_grain > 0.0001)
+    col += (grainHash(
+      gl_FragCoord.xy + vec2(u_seed * 17.0, u_seed * 31.0)) - 0.5) * u_grain;
+  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}
+`;
+  }
+
+  initShaders() {
+    this.shaders = [];
+    // mesmo orcamento de movimento do resto da pagina: no mobile nem liga o WebGL
+    if (window.innerWidth < 700) return;
+    const nodes = document.querySelectorAll('canvas[data-gig-shader]');
+    if (!nodes.length) return;
+    const PALETAS = {
+      // paleta original do preset: #000000, #1F51FF, #00E5FF, #EAFDFF
+      neon:  [[0.000, 0.000, 0.000], [0.122, 0.318, 1.000], [0.000, 0.898, 1.000], [0.918, 0.992, 1.000]],
+      // ouro da LP: #0A0D12 -> #8A6A28 -> #E3BE73 -> #F7ECD2
+      dark:  [[0.039, 0.051, 0.071], [0.541, 0.416, 0.157], [0.890, 0.745, 0.451], [0.969, 0.925, 0.824]],
+      // versao clara pra secao creme dos graficos: filamentos de ouro sobre creme
+      light: [[0.929, 0.910, 0.871], [0.847, 0.804, 0.714], [0.780, 0.604, 0.243], [0.659, 0.486, 0.157]]
+    };
+    const parado = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    nodes.forEach(cv => {
+      const inst = this.criarShader(cv, PALETAS[cv.dataset.gigTone] || PALETAS.dark, parado);
+      if (inst) this.shaders.push(inst);
+    });
+    if (!this.shaders.length) return;
+    this.onVis = () => this.shaders.forEach(x => x.sync());
+    document.addEventListener('visibilitychange', this.onVis);
+  }
+
+  criarShader(cv, cores, parado) {
+    const opts = { alpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'low-power' };
+    const gl = cv.getContext('webgl', opts) || cv.getContext('experimental-webgl', opts);
+    if (!gl) return null;
+
+    const compilar = (tipo, src) => {
+      const sh = gl.createShader(tipo);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        console.warn('gig shader:', gl.getShaderInfoLog(sh));
+        return null;
+      }
+      return sh;
+    };
+    const vs = compilar(gl.VERTEX_SHADER, 'attribute vec2 a_pos;void main(){gl_Position=vec4(a_pos,0.0,1.0);}');
+    const fsh = compilar(gl.FRAGMENT_SHADER, this.fsSource());
+    if (!vs || !fsh) return null;
+
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fsh);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      console.warn('gig shader link:', gl.getProgramInfoLog(prog));
+      return null;
+    }
+    gl.useProgram(prog);
+
+    // triangulo unico cobrindo a tela toda
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(prog, 'a_pos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    const U = n => gl.getUniformLocation(prog, n);
+    const u = {
+      colors: U('u_colors[0]'), scene: U('u_scene'), shape: U('u_shape'),
+      surface: U('u_surface'), finish: U('u_finish'), transform: U('u_transform'),
+      space: U('u_space'), cursor: U('u_cursor')
+    };
+
+    // 8 cores no uniforme; as 4 primeiras sao as usadas (u_colorCount = 4)
+    const paleta = new Float32Array(24);
+    for (let i = 0; i < 8; i++) paleta.set(cores[Math.min(i, cores.length - 1)], i * 3);
+    gl.uniform3fv(u.colors, paleta);
+    gl.uniform4f(u.shape, 1.26, 0.35, 0.28, 0.00);
+    gl.uniform4f(u.surface, 1.82, 1.00, -0.03, 1.48);
+    gl.uniform4f(u.finish, 0.09, 0.00, 0.001, 0.10);
+    gl.uniform4f(u.transform, 1.0, 0.00, 0.20, 0.0);
+
+    let w = 0, h = 0;
+    const escala = parseFloat(cv.dataset.gigScale || '0.6');
+    const redimensionar = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2) * escala;
+      const r = cv.getBoundingClientRect();
+      const nw = Math.max(1, Math.round(r.width * dpr));
+      const nh = Math.max(1, Math.round(r.height * dpr));
+      if (nw !== w || nh !== h) {
+        w = nw; h = nh; cv.width = w; cv.height = h;
+        gl.viewport(0, 0, w, h);
+      }
+    };
+    redimensionar();
+
+    const sec = cv.closest('section') || cv.parentNode;
+    let mx = 0, my = 0, presenca = 0, alvo = 0;
+    const mover = e => {
+      const r = cv.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      mx = ((e.clientX - r.left) / r.width) * 2 - 1;
+      my = (1 - (e.clientY - r.top) / r.height) * 2 - 1;
+      alvo = 1;
+    };
+    const sair = () => { alvo = 0; };
+    sec.addEventListener('pointermove', mover, { passive: true });
+    sec.addEventListener('pointerleave', sair, { passive: true });
+
+    let visivel = false, raf = 0;
+    const rodando = () => visivel && !document.hidden && !parado;
+    const desenhar = t => {
+      gl.uniform4f(u.scene, w, h, t, 4.0);
+      gl.uniform4f(u.space, 0.0, 0.0, mx, my);
+      gl.uniform4f(u.cursor, presenca, 3.0, 0.45, 0.46);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+    const t0 = performance.now();
+    const quadro = () => {
+      raf = 0;
+      redimensionar();
+      presenca += (alvo - presenca) * 0.08;
+      desenhar(((performance.now() - t0) / 1000) * 0.86);
+      if (rodando()) raf = requestAnimationFrame(quadro);
+    };
+    const sync = () => {
+      if (rodando()) { if (!raf) raf = requestAnimationFrame(quadro); }
+      else if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    };
+
+    const ro = new ResizeObserver(() => { redimensionar(); if (!rodando()) desenhar(0); });
+    ro.observe(cv);
+    const io = new IntersectionObserver(es => { visivel = es[0].isIntersecting; sync(); }, { rootMargin: '150px' });
+    io.observe(cv);
+
+    if (parado) desenhar(0); // reduced motion: um quadro parado, sem loop
+    sync();
+
+    return {
+      sync,
+      destruir() {
+        io.disconnect(); ro.disconnect();
+        sec.removeEventListener('pointermove', mover);
+        sec.removeEventListener('pointerleave', sair);
+        if (raf) cancelAnimationFrame(raf);
+        const ext = gl.getExtension('WEBGL_lose_context');
+        if (ext) ext.loseContext();
+      }
+    };
+  }
+
+  // ---- frase em onda ---------------------------------------------------------
+  // O texto corre por um <textPath>. Conforme o visitante rola, o path sai de uma
+  // reta e vira a onda, entao a frase inteira ondula enquanto passa pela tela.
+  async initMarquee() {
+    const sec = document.querySelector('[data-gig-marquee]');
+    if (!sec || sec.hasAttribute('data-gig-marquee-ready')) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const carregar = src => new Promise((ok, nao) => {
+      const s = document.createElement('script');
+      s.src = src; s.async = false;
+      s.onload = ok; s.onerror = () => nao(new Error(src));
+      document.head.appendChild(s);
+    });
+
+    try {
+      if (!window.gsap) await carregar('https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js');
+      if (!window.ScrollTrigger) await carregar('https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js');
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    } catch (err) {
+      return; // sem CDN o bloco estatico continua no ar
+    }
+    const gsap = window.gsap, ST = window.ScrollTrigger;
+    if (!gsap || !ST) return;
+    gsap.registerPlugin(ST);
+
+    const svg = sec.querySelector('svg');
+    const track = svg.querySelector('#gigTrack');
+    const linha = svg.querySelector('#gigLine');
+    const onda = svg.querySelector('#gigWave');
+    const palco = sec.querySelector('.pin-height');
+    const caixa = sec.querySelector('.container');
+    if (!svg || !track || !linha || !palco || !caixa) return;
+
+    sec.setAttribute('data-gig-marquee-ready', '');
+
+    // geometria de referencia da onda (largura 2576.22): os x sao reescalados pro
+    // comprimento real da frase, entao a onda estica junto em vez de se repetir
+    const REF = 2576.22, ALT = 391, MEIO = 195, FONTE = 350, VAO = 200, MARGEM = 900;
+    const PTS = [
+      [0.21875, 190.5], [0.21875, 190.5], [382.004, 0.5], [644.219, 0.5],
+      [906.434, 0.5], [1051.3, 78.1239], [1288.22, 190.5], [1531.72, 306],
+      [1668.87, 390.5], [1932.22, 390.5], [2195.57, 390.5], [2576.22, 190.5], [2576.22, 190.5]
+    ];
+    // mesma quantidade de numeros nas duas versoes: o GSAP interpola o "d" direto
+    const desenhar = (W, reta) => {
+      const k = W / REF;
+      const p = i => (PTS[i][0] * k).toFixed(2) + ' ' + (reta ? MEIO : PTS[i][1]).toFixed(2);
+      let d = 'M' + p(0);
+      for (let i = 1; i < PTS.length; i += 3) d += 'C' + p(i) + ' ' + p(i + 1) + ' ' + p(i + 2);
+      return d;
+    };
+
+    // mede cada pedaco em unidades do viewBox, ja com a Sora carregada
+    const regua = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    regua.setAttribute('font-size', FONTE);
+    regua.setAttribute('y', '-9999');
+    regua.setAttribute('visibility', 'hidden');
+    track.appendChild(regua);
+
+    const pecas = [];
+    let W = MARGEM;
+    Array.from(track.children).forEach(el => {
+      if (!el.classList || !el.classList.contains('segment')) return;
+      const tp = el.querySelector && el.querySelector('textPath');
+      if (tp) {
+        regua.textContent = tp.textContent;
+        const w = regua.getComputedTextLength();
+        tp.setAttribute('startOffset', W.toFixed(2));
+        pecas.push({ el, tp, x: W, w });
+        W += w + VAO;
+      } else {
+        const w = parseFloat(el.getAttribute('width')) || 420;
+        const h = parseFloat(el.getAttribute('height')) || 300;
+        el.setAttribute('x', W.toFixed(2));
+        pecas.push({ el, x: W, w, h });
+        W += w + VAO;
+      }
+    });
+    W += MARGEM - VAO; // respiro no fim igual ao do comeco
+    regua.remove();
+    if (W <= MARGEM * 2) return;
+
+    svg.setAttribute('viewBox', '0 0 ' + W.toFixed(2) + ' ' + ALT);
+    linha.setAttribute('d', desenhar(W, true));
+    if (onda) onda.setAttribute('d', desenhar(W, false));
+
+    // a escala sai do tamanho de fonte desejado na tela; o quanto o texto anda na
+    // horizontal vira a altura extra do trecho grudado
+    const med = { s: 1, curso: 0, rolagem: 1 };
+    const dimensionar = () => {
+      const larguraTela = caixa.clientWidth || window.innerWidth;
+      const fonte = Math.min(92, Math.max(42, window.innerWidth * 0.052));
+      const s = fonte / FONTE;
+      med.s = s;
+      svg.style.width = (W * s).toFixed(2) + 'px';
+      svg.style.height = (ALT * s).toFixed(2) + 'px';
+      med.curso = Math.max(0, W - larguraTela / s);
+      med.rolagem = Math.max(1, Math.round(med.curso * s * 0.62));
+    };
+    dimensionar();
+
+    // as imagens nao seguem o textPath sozinhas: a cada quadro elas sobem/descem e
+    // inclinam junto com o ponto da curva onde estao
+    const encaixarImagens = () => {
+      if (!pecas.some(o => !o.tp)) return; // so texto na faixa: nao ha o que reposicionar
+      const L = linha.getTotalLength();
+      if (!L) return;
+      pecas.forEach(o => {
+        if (o.tp) return;
+        const meio = Math.min(L, o.x + o.w / 2);
+        const a = linha.getPointAtLength(meio);
+        const b = linha.getPointAtLength(Math.min(L, meio + 2));
+        const ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+        o.el.setAttribute('y', (a.y - o.h / 2).toFixed(2));
+        o.el.setAttribute('transform', 'rotate(' + ang.toFixed(2) + ' ' + (o.x + o.w / 2).toFixed(2) + ' ' + a.y.toFixed(2) + ')');
+      });
+    };
+    encaixarImagens();
+
+    this.tlMarquee = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: palco,
+        start: 'top top',
+        end: () => '+=' + med.rolagem,
+        pin: caixa,
+        pinSpacing: true,
+        anticipatePin: 1,
+        scrub: 0.6,
+        invalidateOnRefresh: true,
+        onRefreshInit: dimensionar
+      }
+    })
+    .fromTo(track, { x: 0 }, { x: () => -med.curso, duration: 0.88 }, 0.06)
+    .fromTo(linha,
+      { attr: { d: desenhar(W, true) } },
+      { attr: { d: desenhar(W, false) }, ease: 'power1.inOut', onUpdate: encaixarImagens }, 0)
+    .fromTo(onda, { opacity: 0 }, { opacity: .2, ease: 'power2.in' }, 0);
+  }
+
+  destroyShaders() {
+    if (this.onVis) document.removeEventListener('visibilitychange', this.onVis);
+    (this.shaders || []).forEach(x => x.destruir());
+    this.shaders = [];
+  }
+
+  componentWillUnmount() {
+    this.destroyShaders();
+    clearInterval(this.t);
+    window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener('resize', this.trimMobile);
+    document.removeEventListener('click', this.tocarVideo);
+    if (this.tlMarquee) { if (this.tlMarquee.scrollTrigger) this.tlMarquee.scrollTrigger.kill(); this.tlMarquee.kill(); }
+    clearInterval(this.tCarrossel);
+    const palco = document.querySelector('[data-gig-palco]');
+    if (palco && this.carEntrou) {
+      palco.removeEventListener('pointerenter', this.carEntrou);
+      palco.removeEventListener('pointerleave', this.carSaiu);
+      palco.removeEventListener('pointerdown', this.carDesce);
+      palco.removeEventListener('pointerup', this.carSobe);
+    }
+    if (this.io) this.io.disconnect();
+  }
+
+  // ---- fotos do evento --------------------------------------------------------
+  // Pra trocar ou acrescentar foto: jogue o arquivo em img/evento/ e some uma linha
+  // aqui. Qualquer proporcao serve, o card recorta no quadrado sozinho.
+  fotos() {
+    return [
+      { arq: '/altemir/img/evento/01-plateia-celulares.jpg', alt: 'Plateia de pé com os celulares levantados no Gigantes' },
+      { arq: '/altemir/img/evento/02-palestra-telao.jpg', alt: 'Altemir Rocha palestrando com o telão do evento ao fundo' },
+      { arq: '/altemir/img/evento/03-casal-no-palco.jpg', alt: 'Casal no palco com a plateia iluminando com os celulares' },
+      { arq: '/altemir/img/evento/04-palco-plateia-lotada.jpg', alt: 'Palco do Gigantes diante da plateia lotada' },
+      { arq: '/altemir/img/evento/05-premiacao.jpg', alt: 'Placas de premiação de 1 milhão em comissão' },
+      { arq: '/altemir/img/evento/06-equipe-no-palco.jpg', alt: 'Equipe reunida no palco de frente para a plateia' },
+      { arq: '/altemir/img/evento/07-palco-luzes.jpg', alt: 'Palco do Gigantes iluminado durante a palestra' },
+      { arq: '/altemir/img/evento/08-palestrante-de-costas.jpg', alt: 'Palestrante de costas para a câmera diante da sala cheia' },
+      { arq: '/altemir/img/evento/09-plateia-de-pe.jpg', alt: 'Plateia de pé acompanhando a palestra' },
+      { arq: '/altemir/img/evento/10-venda-e-emocional.jpg', alt: 'Altemir no palco com o painel "Venda é 100% emocional"' }
+    ];
+  }
+
+  // ---- lotes -----------------------------------------------------------------
+  // Espelho do calendario da Greenn, um por passaporte: as datas e os horarios de
+  // virada nao batem entre eles (o Alto Padrao vira as 22h, os outros as 9h).
+  // Quando a data chega, o preco vira aqui e no checkout no mesmo instante.
+  // "abre" = quando o lote entra em vigor (null no primeiro = ja esta valendo).
+  lotes() {
+    return {
+      light: [
+        { nome: 'Lote 1', abre: null,                        valor: 'R$ 797,00' },
+        { nome: 'Lote 2', abre: '2026-08-31T09:00:00-03:00', valor: 'R$ 997,00' },
+        { nome: 'Lote 3', abre: '2026-09-01T09:00:00-03:00', valor: 'R$ 1.197,00' }
+      ],
+      premium: [
+        { nome: 'Lote 1', abre: null,                        valor: 'R$ 997,00' },
+        { nome: 'Lote 2', abre: '2026-08-31T09:00:00-03:00', valor: 'R$ 1.297,00' },
+        { nome: 'Lote 3', abre: '2026-09-01T09:00:00-03:00', valor: 'R$ 1.597,00' }
+      ],
+      alto: [
+        { nome: 'Lote 1', abre: null,                        valor: 'R$ 3.997,00' },
+        { nome: 'Lote 2', abre: '2026-08-31T22:00:00-03:00', valor: 'R$ 4.997,00' },
+        { nome: 'Lote 3', abre: '2026-09-01T22:00:00-03:00', valor: 'R$ 5.997,00' }
+      ]
+    };
+  }
+
+  // Um link por passaporte, fixo pra sempre: quem troca o lote la dentro e a Greenn.
+  checkouts() {
+    return {
+      light: 'https://payfast.greenn.com.br/pre-checkout/e24ebcg',
+      premium: 'https://payfast.greenn.com.br/pre-checkout/qmzud7r',
+      alto: 'https://payfast.greenn.com.br/pre-checkout/xdh7huk'
+    };
+  }
+
+  // WhatsApp do time de vendas, com a mensagem ja escrita pro visitante so enviar
+  zap(mensagem) {
+    return 'https://wa.me/5547991175122?text=' + encodeURIComponent(mensagem);
+  }
+
+  renderVals() {
+    const target = new Date('2026-10-15T08:00:00-03:00').getTime();
+    let diff = Math.max(0, target - this.state.now);
+    const pad = n => String(n).padStart(2, '0');
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor(diff / 3600000) % 24;
+    const m = Math.floor(diff / 60000) % 60;
+    const s = Math.floor(diff / 1000) % 60;
+
+    const qa = [
+      ['Quando e onde vai ser?', 'Nos dias 15 e 16 de outubro de 2026, no Ocean Place, em Balneário Camboriú. A Experiência Alto Padrão tem um 3º dia exclusivo.'],
+      ['Para quem é esse evento?', 'Corretor, gerente de equipe e dono de imobiliária que quer parar de depender da sorte da venda. Do iniciante ao veterano travado num teto.'],
+      ['Serve pra mim, que já vendo bem?', 'Serve principalmente pra você. Quem já vende no facão é quem mais dá salto quando enxerga a Escada.'],
+      ['O que está incluso em cada passaporte?', 'Cada card mostra exatamente o que você leva. Todos dão acesso aos 2 dias completos de imersão.'],
+      ['Dá pra parcelar?', 'Sim. As opções aparecem no checkout assim que você escolhe o seu passaporte.'],
+      ['E se eu comprar e não puder ir?', 'Fale com o nosso time sobre a política de transferência do passaporte para outra pessoa.'],
+      ['Sou de outro estado ou país, vale a pena?', 'Vale. O Gigantes recebe corretor do Brasil inteiro e até de fora, gente que vem de Portugal só pra estar nesses dois dias.']
+    ];
+
+    // carrossel: cada card senta num ponto de um arco imaginario, com o centro do
+    // arco bem abaixo do palco. ANG = quantos graus separam um card do vizinho e
+    // RAIO = a distancia ate o centro, contada em larguras de card (--gigC).
+    const ANG = 12, RAIO = 5.2;
+    const lista = this.fotos();
+    const ativa = Math.min(this.state.foto, lista.length - 1);
+    const mexeu = () => { this.carMexido = Date.now(); };
+    const emC = n => 'calc(var(--gigC) * ' + n.toFixed(4) + ')';
+    const total = lista.length;
+    const fotos = lista.map((f, i) => {
+      // distancia dando a volta: assim o leque sempre tem card dos dois lados,
+      // e nenhuma foto aparece repetida
+      let passo = i - ativa;
+      if (passo > total / 2) passo -= total;
+      else if (passo < -total / 2) passo += total;
+      const rad = passo * ANG * Math.PI / 180;
+      const longe = Math.abs(passo);
+      const some = longe > 2.5;
+      const ir = () => { mexeu(); this.setState({ foto: i }); };
+      return {
+        arq: f.arq, alt: f.alt, ir,
+        tf: 'translate(-50%,-50%) translate(' + emC(RAIO * Math.sin(rad)) + ', '
+          + emC(RAIO * (1 - Math.cos(rad))) + ') rotate(' + (passo * ANG).toFixed(2)
+          + 'deg) scale(' + Math.max(0.58, 1.5 / (1 + longe * 0.52)).toFixed(3) + ')',
+        z: String(100 - Math.round(longe * 10)),
+        op: some ? '0' : '1',
+        pe: some ? 'none' : 'auto',
+        veu: longe === 0 ? '0' : String(Math.min(0.55, longe * 0.2)),
+        pontoW: longe === 0 ? '28px' : '8px',
+        pontoCor: longe === 0 ? '#E3BE73' : 'rgba(245,243,239,.26)',
+        tecla: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ir(); } }
+      };
+    });
+    const andar = passo => () => {
+      mexeu();
+      this.setState(st => ({ foto: (st.foto + passo + lista.length) % lista.length }));
+    };
+
+    // lote vigente de cada passaporte = o ultimo cuja data de abertura ja passou
+    const agora = this.state.now;
+    const vigente = trilha => trilha.reduce(
+      (atual, l) => (l.abre && Date.parse(l.abre) <= agora) ? l : atual, trilha[0]);
+    const tab = this.lotes();
+    const loLight = vigente(tab.light);
+    const loPremium = vigente(tab.premium);
+    const loAlto = vigente(tab.alto);
+    const preco = (doLote, doPainel) => doLote || doPainel || '[definir valor]';
+    const links = this.checkouts();
+
+    const pct = Math.max(0, Math.min(100, this.props.vagasPreenchidas ?? 78));
+
+    return {
+      cdDays: pad(d), cdHours: pad(h), cdMin: pad(m), cdSec: pad(s),
+      showBar: this.state.showBar,
+      fotos,
+      carAnterior: andar(-1),
+      carProximo: andar(1),
+      loteAtual: loLight.nome,
+      loteLight: loLight.nome,
+      lotePremium: loPremium.nome,
+      loteAlto: loAlto.nome,
+      priceLight: preco(loLight.valor, this.props.priceLight),
+      pricePremium: preco(loPremium.valor, this.props.pricePremium),
+      priceAlto: preco(loAlto.valor, this.props.priceAlto),
+      ctaLight: links.light || '#',
+      ctaPremium: links.premium || '#',
+      ctaAlto: links.alto || '#',
+      ctaGrupo: this.zap('Olá, quero consultar pacote de grupo para o Gigantes 2026'),
+      ctaTime: this.zap('Olá, quero falar com o time do Gigantes 2026'),
+      vagasWidth: pct + '%',
+      vagasLabel: pct + '% preenchido',
+      faqs: qa.map(([q, a], i) => ({
+        q, a,
+        open: this.state.open === i,
+        sign: this.state.open === i ? '–' : '+',
+        toggle: () => this.setState(st => ({ open: st.open === i ? -1 : i })),
+        key: e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.setState(st => ({ open: st.open === i ? -1 : i }));
+          }
+        }
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
