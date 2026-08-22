@@ -52,6 +52,21 @@
   /* antes do GSAP subir, so o bloco estatico aparece */
   [data-gig-marquee]:not([data-gig-marquee-ready]) .pin-height { display: none }
   [data-gig-marquee][data-gig-marquee-ready] [data-gig-marquee-off] { display: none }
+  /* ---- frase do facao no celular: as palavras sobem em degraus ---- */
+  /* o estado escondido so vale depois que o JS arma o bloco; sem JS o texto
+     aparece normal em vez de ficar invisivel */
+  .gig-degrau { display: inline-block }
+  @media (max-width: 780px) {
+    [data-gig-degraus][data-gig-degrau-armado] .gig-degrau {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 620ms cubic-bezier(.2,.9,.25,1), transform 620ms cubic-bezier(.2,.9,.25,1);
+      transition-delay: calc(var(--d, 0) * 62ms);
+    }
+    [data-gig-degraus][data-gig-degrau-on] .gig-degrau { opacity: 1; transform: none }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-gig-degraus] .gig-degrau { opacity: 1 !important; transform: none !important; transition: none !important }
+  }
   /* ---- depoimentos em video: capa da Wistia + click-to-play ---- */
   [data-gig-video] { cursor: pointer; -webkit-tap-highlight-color: transparent }
   [data-gig-play] { transition: transform 450ms cubic-bezier(.2,.8,.2,1), background 450ms }
@@ -197,8 +212,8 @@
   <section data-gig-marquee="" data-screen-label="O facão" style="position:relative;background:#0A0D12">
     <!-- estatico: e o que fica no ar se o GSAP nao carregar ou se o visitante pediu menos movimento -->
     <div data-gig-marquee-off="" style="max-width:960px;margin:0 auto;padding:0 24px 100px">
-      <div style="padding:40px;border-left:3px solid #E3BE73;background:linear-gradient(90deg, rgba(227,190,115,.09), rgba(227,190,115,0))">
-        <p style="margin:0;font-family:'Sora',sans-serif;font-weight:600;font-size:clamp(22px,2.9vw,34px);line-height:1.25;letter-spacing:-.015em;text-wrap:pretty">O nome disso é <span style="color:#E3BE73">subir o morro no facão</span>: forçar a venda na pressão, cortando mato e brigando com o cliente pra ver quem cansa primeiro.</p>
+      <div style="padding:clamp(24px,6vw,40px);border-left:3px solid #E3BE73;background:linear-gradient(90deg, rgba(227,190,115,.09), rgba(227,190,115,0))">
+        <p style="margin:0;font-family:'Sora',sans-serif;font-weight:600;font-size:clamp(22px,2.9vw,34px);line-height:1.25;letter-spacing:-.015em;text-wrap:pretty" data-gig-degraus=""><span class="gig-degrau" style="--d:0">O</span> <span class="gig-degrau" style="--d:1">nome</span> <span class="gig-degrau" style="--d:2">disso</span> <span class="gig-degrau" style="--d:3">é</span> <span class="gig-degrau" style="--d:4"><span style="color:#E3BE73">subir</span></span> <span class="gig-degrau" style="--d:5"><span style="color:#E3BE73">o</span></span> <span class="gig-degrau" style="--d:6"><span style="color:#E3BE73">morro</span></span> <span class="gig-degrau" style="--d:7"><span style="color:#E3BE73">no</span></span> <span class="gig-degrau" style="--d:8"><span style="color:#E3BE73">facão</span>:</span> <span class="gig-degrau" style="--d:9">forçar</span> <span class="gig-degrau" style="--d:10">a</span> <span class="gig-degrau" style="--d:11">venda</span> <span class="gig-degrau" style="--d:12">na</span> <span class="gig-degrau" style="--d:13">pressão,</span> <span class="gig-degrau" style="--d:14">cortando</span> <span class="gig-degrau" style="--d:15">mato</span> <span class="gig-degrau" style="--d:16">e</span> <span class="gig-degrau" style="--d:17">brigando</span> <span class="gig-degrau" style="--d:18">com</span> <span class="gig-degrau" style="--d:19">o</span> <span class="gig-degrau" style="--d:20">cliente</span> <span class="gig-degrau" style="--d:21">pra</span> <span class="gig-degrau" style="--d:22">ver</span> <span class="gig-degrau" style="--d:23">quem</span> <span class="gig-degrau" style="--d:24">cansa</span> <span class="gig-degrau" style="--d:25">primeiro.</span></p>
       </div>
     </div>
 
@@ -220,7 +235,7 @@
 
   <!-- ================= A ESCADA ================= -->
   <section data-gig-reveal-scope="" data-screen-label="A Escada" style="padding:100px 24px;background:linear-gradient(180deg,#F4F1EA 0%,#EDE8DE 100%);color:#111820;position:relative;overflow:hidden">
-    <canvas data-gig-shader="" data-gig-tone="light" aria-hidden="true" style="position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;opacity:.16"></canvas>
+    <canvas data-gig-shader="" data-gig-tone="light" aria-hidden="true" style="position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;opacity:.2"></canvas>
     <div style="position:relative;z-index:1;max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:56px">
       <div style="display:flex;flex-direction:column;gap:26px;max-width:900px">
         <h2 style="margin:0;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(27px,3.9vw,46px);line-height:1.12;letter-spacing:-.02em;text-wrap:pretty">O cliente não compra quando você quebra a objeção dele. Compra quando <span style="border-bottom:4px solid #C79A3E">para de se defender de você.</span></h2>
@@ -391,7 +406,7 @@
 
   <!-- ================= OS 2 DIAS ================= -->
   <section data-gig-reveal-scope="" data-screen-label="Os 2 dias" style="position:relative;overflow:hidden;padding:100px 24px;background:#0A0D12;border-top:1px solid rgba(245,243,239,.07)">
-    <canvas data-gig-shader="" data-gig-tone="dark" aria-hidden="true" style="position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;opacity:.2"></canvas>
+    <canvas data-gig-shader="" data-gig-tone="dark" aria-hidden="true" style="position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;opacity:.26"></canvas>
     <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(48% 56% at 13% 30%, rgba(227,190,115,.11), transparent 70%), radial-gradient(48% 56% at 87% 66%, rgba(56,102,168,.15), transparent 70%)"></div>
     <div style="position:relative;z-index:1;max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:48px">
       <div style="display:flex;flex-direction:column;gap:22px;max-width:900px">
@@ -750,6 +765,23 @@ class Component extends DCLogic {
     this.initMarquee();
 
     this.initShaders();
+    this.initDegraus();
+  }
+
+  // no celular, as palavras da frase do facao sobem uma apos a outra quando o
+  // bloco entra na tela, como degraus sendo subidos
+  initDegraus() {
+    const bloco = document.querySelector('[data-gig-degraus]');
+    if (!bloco || window.innerWidth > 780) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    bloco.setAttribute('data-gig-degrau-armado', '');
+    this.ioDegraus = new IntersectionObserver(es => {
+      if (es.some(e => e.isIntersecting)) {
+        bloco.setAttribute('data-gig-degrau-on', '');
+        this.ioDegraus.disconnect();
+      }
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+    this.ioDegraus.observe(bloco);
   }
 
   // ---- fundo "Neuro Noise" (WebGL1, sem biblioteca) -------------------------
@@ -1153,7 +1185,7 @@ void main() {
       raf = 0;
       redimensionar();
       presenca += (alvo - presenca) * 0.08;
-      desenhar(((performance.now() - t0) / 1000) * 0.86);
+      desenhar(((performance.now() - t0) / 1000) * 1.9);
       if (rodando()) raf = requestAnimationFrame(quadro);
     };
     const sync = () => {
@@ -1189,6 +1221,9 @@ void main() {
     const sec = document.querySelector('[data-gig-marquee]');
     if (!sec || sec.hasAttribute('data-gig-marquee-ready')) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // no celular a frase corria na horizontal num palco de 100vh e ficava
+    // ilegivel; ali quem entra e o bloco estatico com as palavras em degraus
+    if (window.innerWidth <= 780) return;
 
     const carregar = src => new Promise((ok, nao) => {
       const s = document.createElement('script');
@@ -1331,6 +1366,7 @@ void main() {
 
   componentWillUnmount() {
     this.destroyShaders();
+    if (this.ioDegraus) this.ioDegraus.disconnect();
     clearInterval(this.t);
     window.removeEventListener('scroll', this.onScroll);
     window.removeEventListener('resize', this.trimMobile);
