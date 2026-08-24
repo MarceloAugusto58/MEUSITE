@@ -131,12 +131,12 @@
 
   <!-- ================= HERO ================= -->
   <section data-gig-reveal-scope="" data-screen-label="Hero" style="position:relative;padding:26px 24px 96px;background:radial-gradient(120% 90% at 50% -10%, #16233C 0%, #0C121C 45%, #0A0D12 100%);overflow:hidden">
-    <div aria-hidden="true" style="position:absolute;inset:-40px;pointer-events:none;background:url('/altemir/img/fundo.jpg') center/cover no-repeat;filter:blur(10px) saturate(.95);opacity:.85"></div>
+    <div aria-hidden="true" data-gig-foto="" style="position:absolute;inset:-40px;pointer-events:none;background:url('/altemir/img/fundo.jpg') center/cover no-repeat;filter:blur(4px) saturate(1);opacity:.9"></div>
     <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(58% 62% at 50% 42%, rgba(10,13,18,.94) 0%, rgba(10,13,18,.86) 45%, rgba(10,13,18,.5) 75%, rgba(10,13,18,.28) 100%), linear-gradient(180deg, rgba(10,13,18,.25) 0%, rgba(10,13,18,.35) 60%, #0A0D12 100%);backdrop-filter:blur(2px)"></div>
     <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);mask-image:radial-gradient(46% 54% at 50% 40%, #000 0%, #000 55%, transparent 100%);-webkit-mask-image:radial-gradient(46% 54% at 50% 40%, #000 0%, #000 55%, transparent 100%)"></div>
     <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(227,190,115,.08) 1px, transparent 1px),linear-gradient(90deg, rgba(227,190,115,.08) 1px, transparent 1px);background-size:76px 76px;mask-image:radial-gradient(85% 60% at 50% 8%, #000 0%, transparent 72%);-webkit-mask-image:radial-gradient(85% 60% at 50% 8%, #000 0%, transparent 72%)"></div>
-    <div aria-hidden="true" style="position:absolute;top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;pointer-events:none;border-radius:999px;background:radial-gradient(circle, rgba(227,190,115,.16), transparent 65%);filter:blur(20px);animation:gigFloat 13s ease-in-out infinite"></div>
-    <div aria-hidden="true" style="position:absolute;bottom:-120px;right:-80px;width:420px;height:420px;pointer-events:none;border-radius:999px;background:radial-gradient(circle, rgba(240,40,30,.12), transparent 65%);filter:blur(24px);animation:gigFloat 17s ease-in-out infinite reverse"></div>
+    <div aria-hidden="true" style="position:absolute;top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;pointer-events:none;border-radius:999px;background:radial-gradient(circle, rgba(227,190,115,.16), transparent 72%);animation:gigFloat 13s ease-in-out infinite"></div>
+    <div aria-hidden="true" style="position:absolute;bottom:-120px;right:-80px;width:420px;height:420px;pointer-events:none;border-radius:999px;background:radial-gradient(circle, rgba(240,40,30,.12), transparent 72%);animation:gigFloat 17s ease-in-out infinite reverse"></div>
     <div style="position:relative;max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:44px">
 
       <header style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;padding:8px 0 4px">
@@ -659,13 +659,18 @@ class Component extends DCLogic {
       const small = window.innerWidth < 700;
       document.querySelectorAll('[aria-hidden="true"]').forEach(el => {
         const cs = getComputedStyle(el);
-        const isPhoto = cs.backgroundImage.includes('fundo.png');
+        // marcada por atributo, e nao pelo nome do arquivo: a foto ja se chamou
+        // fundo.png e virou img/fundo.jpg, o teste antigo parou de casar e ela
+        // caia na regra do blur, sumindo em toda tela abaixo de 700px
+        const isPhoto = el.hasAttribute('data-gig-foto');
         const blurred = cs.filter !== 'none' && cs.filter.includes('blur');
         const grain = cs.mixBlendMode === 'overlay';
         const keep = el.hasAttribute('data-gig-keep');
         if (isPhoto) {
-          // a foto do hero permanece no mobile; o blur é do CSS, aqui só alivia o custo
-          el.style.opacity = small ? '.6' : '';
+          // a foto do hero permanece no mobile; o blur é do CSS, aqui só alivia o custo.
+          // guarda a opacidade autoral: zerar a inline apagaria o .85 do desktop
+          if (el.dataset.gigOp === undefined) el.dataset.gigOp = el.style.opacity || '';
+          el.style.opacity = small ? '.6' : el.dataset.gigOp;
         } else if (!keep && (blurred || grain)) {
           el.style.display = small ? 'none' : '';
         }
