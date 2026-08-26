@@ -52,6 +52,119 @@
   /* antes do GSAP subir, so o bloco estatico aparece */
   [data-gig-marquee]:not([data-gig-marquee-ready]) .pin-height { display: none }
   [data-gig-marquee][data-gig-marquee-ready] [data-gig-marquee-off] { display: none }
+  /* ---- card de estatisticas, adaptado de um design da Uiverse.io (Spacious74) ---- */
+  /* .outer no original: moldura com borda em gradiente radial (branco -> preto).
+     Aqui o canto vira dourado -> fundo da pagina, pra ler como uma borda acesa
+     em vez de um contorno branco chapado sobre o resto escuro da secao. */
+  [data-gig-stat-outer] {
+    width: 100%; max-width: 760px; margin: 0 auto;
+    border-radius: 22px; padding: 1px;
+    background: radial-gradient(circle 240px at 0% 0%, rgba(227,190,115,.6), #0A0D12);
+    position: relative; isolation: isolate;
+    transition: transform 320ms cubic-bezier(.25,1,.5,1);
+  }
+  /* o ponto que percorre os quatro cantos, igual ao original (mesmos calc de 30/35px) */
+  [data-gig-stat-dot] {
+    width: 5px; aspect-ratio: 1; position: absolute;
+    background: #F7ECD2; box-shadow: 0 0 10px #E3BE73; border-radius: 100px;
+    z-index: 2; right: 10%; top: 10%;
+    animation: gigStatDot 6s linear infinite;
+  }
+  @keyframes gigStatDot {
+    0%, 100% { top: 10%; right: 10% }
+    25% { top: 10%; right: calc(100% - 35px) }
+    50% { top: calc(100% - 30px); right: calc(100% - 35px) }
+    75% { top: calc(100% - 30px); right: 10% }
+  }
+  [data-gig-stat-card] {
+    z-index: 1; width: 100%; border-radius: 21px;
+    border: 1px solid rgba(245,243,239,.08);
+    background: radial-gradient(circle 340px at 0% 0%, #181D26 0%, #0A0D12 72%);
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+    padding: 30px 26px;
+  }
+  /* feixe de luz estatico varrendo o canto superior, o "brilho premium" do original */
+  [data-gig-stat-ray] {
+    width: 240px; height: 46px; border-radius: 100px; position: absolute;
+    background: rgba(240,217,165,.4); opacity: .5;
+    box-shadow: 0 0 50px rgba(227,190,115,.4); filter: blur(12px);
+    transform-origin: 10%; top: -4%; left: -6%; transform: rotate(38deg);
+    pointer-events: none;
+  }
+  /* grade fina nos 10% de cada lado: top e left "acesos" (mesmo canto do ray e do
+     gradiente da moldura), bottom e right neutros, igual ao original */
+  [data-gig-stat-line] { position: absolute; pointer-events: none }
+  [data-gig-stat-line="top"] { top: 10%; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, rgba(227,190,115,.4) 0%, transparent 65%) }
+  [data-gig-stat-line="left"] { left: 10%; top: 0; bottom: 0; width: 1px; background: linear-gradient(180deg, rgba(227,190,115,.4) 0%, transparent 65%) }
+  [data-gig-stat-line="bottom"] { bottom: 10%; left: 0; right: 0; height: 1px; background: rgba(245,243,239,.07) }
+  [data-gig-stat-line="right"] { right: 10%; top: 0; bottom: 0; width: 1px; background: rgba(245,243,239,.07) }
+  [data-gig-stat-item] {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; gap: 7px;
+    padding: 20px 4px; text-align: center;
+  }
+  [data-gig-stat-item] + [data-gig-stat-item] { border-top: 1px solid rgba(245,243,239,.1) }
+  [data-gig-stat-num] {
+    font-family: 'Sora', sans-serif; font-weight: 800; letter-spacing: -.02em;
+    font-size: clamp(32px, 9vw, 40px);
+    background: linear-gradient(135deg, #F7ECD2 0%, #E3BE73 45%, #8A6A28 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  [data-gig-stat-cap] { font-size: 15px; line-height: 1.4; color: rgba(245,243,239,.7) }
+  /* min-width: a partir daqui os tres cabem lado a lado, como no bloco original */
+  @media (min-width: 680px) {
+    [data-gig-stat-card] { flex-direction: row; padding: 36px 30px }
+    [data-gig-stat-item] { flex: 1; padding: 4px 14px }
+    [data-gig-stat-item] + [data-gig-stat-item] { border-top: none; border-left: 1px solid rgba(245,243,239,.1) }
+    [data-gig-stat-num] { font-size: clamp(34px, 3.2vw, 44px) }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-gig-stat-dot] { animation: none }
+    [data-gig-stat-outer] { transition: none }
+  }
+  /* ---- botao flutuante de whatsapp ---- */
+  [data-gig-zap] {
+    position: fixed; right: clamp(14px, 1.8vw, 22px); z-index: 55;
+    width: clamp(46px, 3.9vw, 54px); height: clamp(46px, 3.9vw, 54px);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 999px; isolation: isolate; --ga: 0deg;
+    bottom: calc(var(--gig-barra-h, 0px) + 22px);
+    border: 1px solid transparent;
+    background:
+      linear-gradient(#161B23, #0D1118) padding-box,
+      conic-gradient(from var(--ga), rgba(227,190,115,.14), #E3BE73 22%, rgba(227,190,115,.14) 48%, #D7A94E 72%, rgba(227,190,115,.14)) border-box;
+    box-shadow: 0 16px 34px -14px rgba(0,0,0,.92), inset 0 1px 0 rgba(255,255,255,.07);
+    animation: gigAngle 7s linear infinite;
+    transition: bottom 460ms cubic-bezier(.25,1,.5,1), transform 320ms cubic-bezier(.25,1,.5,1), box-shadow 320ms ease;
+  }
+  [data-gig-zap] svg { width: 54%; height: 54%; fill: #E3BE73; transition: fill 320ms ease }
+  [data-gig-zap]:hover { transform: translateY(-3px) }
+  [data-gig-zap]:hover svg { fill: #F0D9A5 }
+  [data-gig-zap]:hover { box-shadow: 0 20px 40px -14px rgba(0,0,0,.95), 0 0 26px -6px rgba(227,190,115,.45), inset 0 1px 0 rgba(255,255,255,.09) }
+  @media (prefers-reduced-motion: reduce) { [data-gig-zap] { animation: none; transition: none } }
+  /* ---- barra de credenciais do hero: um bloco unico, nao quatro pilulas ---- */
+  [data-gig-barra] {
+    display: grid; grid-template-columns: repeat(4, auto);
+    width: fit-content; max-width: 100%; margin: 0 auto;
+    border: 1px solid rgba(245,243,239,.14); border-radius: 999px;
+    background: rgba(245,243,239,.03); overflow: hidden;
+  }
+  [data-gig-barra] > span {
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    padding: 13px clamp(12px, 1.7vw, 26px);
+    font-family: 'IBM Plex Mono', monospace; font-size: clamp(9.5px, .95vw, 11.5px);
+    letter-spacing: .1em; text-transform: uppercase; color: rgba(245,243,239,.72);
+    white-space: nowrap;
+  }
+  [data-gig-barra] > span + span { border-left: 1px solid rgba(245,243,239,.12) }
+  /* abaixo disso os quatro nao cabem lado a lado: viram 2x2 dentro da mesma barra */
+  @media (max-width: 900px) {
+    [data-gig-barra] { grid-template-columns: 1fr 1fr; width: 100%; border-radius: 16px }
+    [data-gig-barra] > span { white-space: normal; font-size: 10px; padding: 12px 12px; line-height: 1.35 }
+    [data-gig-barra] > span:nth-child(3), [data-gig-barra] > span:nth-child(4) { border-top: 1px solid rgba(245,243,239,.12) }
+    [data-gig-barra] > span:nth-child(3) { border-left: none }
+  }
   /* ---- frase do facao no celular: as palavras sobem em degraus ---- */
   /* o estado escondido so vale depois que o JS arma o bloco; sem JS o texto
      aparece normal em vez de ficar invisivel */
@@ -166,11 +279,11 @@
         <div style="font-size:14px;color:rgba(245,243,239,.62)">Vagas limitadas. O valor sobe a cada novo lote.</div>
       </div>
 
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
-        <div style="padding:11px 18px;border:1px solid rgba(245,243,239,.14);border-radius:999px;background:rgba(245,243,239,.03);font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,239,.72)">5ª edição</div>
-        <div style="padding:11px 18px;border:1px solid rgba(245,243,239,.14);border-radius:999px;background:rgba(245,243,239,.03);font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,239,.72)">Edições esgotadas</div>
-        <div style="padding:11px 18px;border:1px solid rgba(245,243,239,.14);border-radius:999px;background:rgba(245,243,239,.03);font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,239,.72)">+10 mil corretores formados</div>
-        <div style="padding:11px 18px;border:1px solid rgba(245,243,239,.14);border-radius:999px;background:rgba(245,243,239,.03);font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,239,.72)">+R$2 bilhões em vendas</div>
+      <div data-gig-barra="">
+        <span>5ª edição</span>
+        <span>Edições esgotadas</span>
+        <span>+10 mil corretores formados</span>
+        <span>+R$2 bilhões em vendas</span>
       </div>
     </div>
   </section>
@@ -365,18 +478,26 @@
       </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px;border:1px solid rgba(227,190,115,.28);border-radius:18px;overflow:hidden;background:rgba(227,190,115,.06)">
-        <div style="padding:34px 28px;display:flex;flex-direction:column;gap:8px">
-          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(30px,3.4vw,42px);color:#E3BE73;letter-spacing:-.02em">+10 mil</div>
-          <div style="font-size:15.5px;color:rgba(245,243,239,.7)">corretores formados</div>
-        </div>
-        <div style="padding:34px 28px;display:flex;flex-direction:column;gap:8px;border-left:1px solid rgba(227,190,115,.2)">
-          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(30px,3.4vw,42px);color:#E3BE73;letter-spacing:-.02em">+1.000</div>
-          <div style="font-size:15.5px;color:rgba(245,243,239,.7)">já bateram 1 milhão em comissão</div>
-        </div>
-        <div style="padding:34px 28px;display:flex;flex-direction:column;gap:8px;border-left:1px solid rgba(227,190,115,.2)">
-          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(30px,3.4vw,42px);color:#E3BE73;letter-spacing:-.02em">+R$2 bi</div>
-          <div style="font-size:15.5px;color:rgba(245,243,239,.7)">somados em vendas</div>
+      <div data-gig-stat-outer="" style-hover="transform:translateY(-3px)">
+        <i data-gig-stat-dot="" aria-hidden="true"></i>
+        <div data-gig-stat-card="">
+          <i data-gig-stat-ray="" aria-hidden="true" data-gig-keep=""></i>
+          <i data-gig-stat-line="top" aria-hidden="true"></i>
+          <i data-gig-stat-line="bottom" aria-hidden="true"></i>
+          <i data-gig-stat-line="left" aria-hidden="true"></i>
+          <i data-gig-stat-line="right" aria-hidden="true"></i>
+          <div data-gig-stat-item="">
+            <div data-gig-stat-num="">+10 mil</div>
+            <div data-gig-stat-cap="">corretores formados</div>
+          </div>
+          <div data-gig-stat-item="">
+            <div data-gig-stat-num="">+1.000</div>
+            <div data-gig-stat-cap="">já bateram 1 milhão em comissão</div>
+          </div>
+          <div data-gig-stat-item="">
+            <div data-gig-stat-num="">+R$2 bi</div>
+            <div data-gig-stat-cap="">somados em vendas</div>
+          </div>
         </div>
       </div>
     </div>
@@ -526,7 +647,10 @@
       </div>
       </div>
 
-      <p style="margin:0;padding:24px 28px;border-radius:16px;border:1px dashed rgba(17,24,32,.25);font-size:17px;line-height:1.6;color:rgba(17,24,32,.75);text-align:center">Vai levar a equipe? Pra grupos de 5 ou mais, <a href="{{ ctaGrupo }}" target="_blank" rel="noopener" style="color:#8A6A2A;border-bottom:1px solid rgba(138,106,42,.4)">fale com o nosso time</a> e garanta a condição.</p>
+      <div style="padding:28px;border-radius:16px;border:1px dashed rgba(17,24,32,.25);display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center">
+        <p style="margin:0;font-size:17px;line-height:1.6;color:rgba(17,24,32,.75)">Vai levar a equipe? Pra grupos de 5 ou mais, a gente fecha uma condição especial pra sua equipe.</p>
+        <a href="{{ ctaGrupo }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:999px;border:1px solid rgba(138,106,42,.45);background:rgba(138,106,42,.07);color:#6B4F1E;font-family:'Sora',sans-serif;font-weight:700;font-size:15px;letter-spacing:.005em;transition:border-color 220ms ease,background 220ms ease,transform 220ms ease" style-hover="border-color:#8A6A2A;background:rgba(138,106,42,.15);transform:translateY(-1px)">Fale com o nosso time<span aria-hidden="true" style="font-size:16px;line-height:1">→</span></a>
+      </div>
     </div>
   </section>
 
@@ -634,11 +758,17 @@
 
   <!-- ================= STICKY CTA ================= -->
   <sc-if value="{{ showBar }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;left:0;right:0;bottom:0;z-index:50;padding:14px 20px;background:rgba(10,13,18,.92);backdrop-filter:blur(14px);border-top:1px solid rgba(227,190,115,.3);display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap">
+    <div data-gig-barra-cta="" style="position:fixed;left:0;right:0;bottom:0;z-index:50;padding:14px 20px;background:rgba(10,13,18,.92);backdrop-filter:blur(14px);border-top:1px solid rgba(227,190,115,.3);display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,243,239,.65)">15 e 16 de out · 2026 · lote atual aberto</div>
       <a href="#oferta" style="display:inline-flex;align-items:center;justify-content:center;padding:14px 30px;border-radius:999px;isolation:isolate;--ga:0deg;--gao:0deg;--gp:5%;--gs:#ffffff;position:relative;overflow:hidden;outline-offset:4px;border:1px solid transparent;color:#F3DFAE;white-space:nowrap;background:linear-gradient(#1B212B,#12161D) padding-box, conic-gradient(from calc(var(--ga) - var(--gao)), transparent, #E3BE73 var(--gp), var(--gs) calc(var(--gp) * 2), #E3BE73 calc(var(--gp) * 3), transparent calc(var(--gp) * 4)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 18px 40px -20px rgba(0,0,0,.85);animation:gigAngle 3s linear infinite;transition:--gao 800ms cubic-bezier(.25,1,.5,1),--gp 800ms cubic-bezier(.25,1,.5,1),--gs 800ms cubic-bezier(.25,1,.5,1);font-family:'Sora',sans-serif;font-weight:700;font-size:14.5px" style-before="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:inherit;opacity:.4;background:radial-gradient(circle at 2px 2px, #fff .5px, transparent 0) padding-box;background-size:4px 4px;background-repeat:space;mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000);-webkit-mask-image:conic-gradient(from calc(var(--ga) + 45deg), #000, transparent 10% 90%, #000)" style-after="content:'';pointer-events:none;position:absolute;inset-inline-start:50%;inset-block-start:50%;translate:-50% -50%;z-index:-1;width:100%;aspect-ratio:1;opacity:.42;background:linear-gradient(-50deg, transparent, #E3BE73, transparent);mask-image:radial-gradient(circle at bottom, transparent 40%, #000);-webkit-mask-image:radial-gradient(circle at bottom, transparent 40%, #000);animation:gigShimmer 3s linear infinite" style-hover="--gp:20%;--gao:95deg;--gs:#F0D9A5">GARANTIR MEU PASSAPORTE</a>
     </div>
   </sc-if>
+
+  <!-- ================= WHATSAPP FLUTUANTE ================= -->
+  <!-- sobe sozinho quando a barra fixa de CTA aparece, pra nao ficar por cima dela -->
+  <a href="{{ zapFlutuante }}" target="_blank" rel="noopener noreferrer" data-gig-zap="" aria-label="Falar com o time no WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+  </a>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;priceLight&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;[campo dinâmico]&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Oferta&quot;},&quot;pricePremium&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;[campo dinâmico]&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Oferta&quot;},&quot;priceAlto&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;[campo dinâmico]&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Oferta&quot;},&quot;vagasPreenchidas&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:78,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Escassez&quot;}}">
@@ -646,13 +776,32 @@ class Component extends DCLogic {
   state = { open: 0, now: Date.now(), showBar: false, foto: 0 };
 
   componentDidMount() {
-    this.t = setInterval(() => this.setState({ now: Date.now() }), 1000);
+    // altura real da barra fixa -> o botao flutuante se apoia nela.
+    // ela muda de altura conforme o rotulo quebra: 82px no desktop, 120px no
+    // celular e 137px em telas bem estreitas.
+    this.altBarra = -1;
+    this.medirBarra = () => {
+      const barra = document.querySelector('[data-gig-barra-cta]');
+      const h = barra ? Math.round(barra.getBoundingClientRect().height) : 0;
+      if (h === this.altBarra) return;
+      this.altBarra = h;
+      document.documentElement.style.setProperty('--gig-barra-h', h + 'px');
+    };
+
+    this.t = setInterval(() => { this.setState({ now: Date.now() }); this.medirBarra(); }, 1000);
     this.onScroll = () => {
       const y = window.scrollY || document.documentElement.scrollTop;
       const should = y > 900;
-      if (should !== this.state.showBar) this.setState({ showBar: should });
+      if (should !== this.state.showBar) {
+        this.setState({ showBar: should });
+        // a barra so passa a existir depois do render: mede no proximo tique
+        setTimeout(this.medirBarra, 0);
+      }
+      this.medirBarra();
     };
     window.addEventListener('scroll', this.onScroll, { passive: true });
+    window.addEventListener('resize', this.medirBarra);
+    this.medirBarra();
 
     // orçamento de movimento: no mobile, corta os efeitos pesados (blur/halos/grão)
     this.trimMobile = () => {
@@ -1374,6 +1523,7 @@ void main() {
     if (this.ioDegraus) this.ioDegraus.disconnect();
     clearInterval(this.t);
     window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener('resize', this.medirBarra);
     window.removeEventListener('resize', this.trimMobile);
     document.removeEventListener('click', this.tocarVideo);
     if (this.tlMarquee) { if (this.tlMarquee.scrollTrigger) this.tlMarquee.scrollTrigger.kill(); this.tlMarquee.kill(); }
@@ -1518,6 +1668,7 @@ void main() {
     return {
       cdDays: pad(d), cdHours: pad(h), cdMin: pad(m), cdSec: pad(s),
       showBar: this.state.showBar,
+      zapFlutuante: this.zap('Olá, quero falar com o time do Gigantes 2026'),
       fotos,
       carAnterior: andar(-1),
       carProximo: andar(1),
