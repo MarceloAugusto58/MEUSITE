@@ -5,7 +5,7 @@ A home (`marceloaugustosites.com.br`) é o `index.html` da raiz do repositório 
 
 Funil: **anúncio → landing → aplicação (8 perguntas) → agendamento da conversa de 15 min**
 
-O lead é salvo **antes** da agenda. Quem preenche e não agenda continua na lista para follow-up.
+O lead entra na planilha já na **1ª etapa** (nome + WhatsApp), com status `incompleto`, e a mesma linha é atualizada a cada etapa. No envio final o status vira `completo`; quando a pessoa agenda, a linha ganha `agendado = sim`. Assim dá para fazer follow-up de quem desistiu no meio (a coluna `ultima_etapa` mostra onde parou) e de quem respondeu tudo mas não agendou.
 
 A página está com `noindex`: serve para anúncio e não aparece no Google, para não competir com a home.
 
@@ -58,7 +58,7 @@ Sem `LEAD_WEBHOOK_URL`, os leads ficam só nos logs da função `api/lead` na Ve
 
 ### 3. Planilha de leads
 
-Siga as instruções no topo de `integracoes/google-sheets.gs`. Cada aplicação vira uma linha. Quando a pessoa agenda, a coluna `agendado` é marcada na mesma linha.
+Siga as instruções no topo de `integracoes/google-sheets.gs`. Para atualizar o script sem mudar a URL: **Gerenciar implantações → editar → Nova versão**. As colunas são encontradas pelo nome do cabeçalho, e as novas são criadas no fim da planilha.
 
 ### 4. Calendly
 

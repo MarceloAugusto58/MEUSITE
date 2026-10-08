@@ -112,6 +112,27 @@ window.CONFIG = {
   };
   track('PageView', { page_path: location.pathname });
 })();
+
+/* Erros de JavaScript em produção (debug temporário): vão para o Clarity, o dataLayer e /api/log.
+   No máximo 5 por página e sem reentrada, para não gerar laço. */
+(function () {
+  var sent = 0, busy = false;
+  function report(message, source, line) {
+    if (busy || sent >= 5) return;
+    busy = true; sent++;
+    try {
+      var info = { event: 'JS_ERROR', message: String(message || '').slice(0, 300), source: String(source || '').split('?')[0].slice(-120), line: line || '', screen_width: window.innerWidth, online: String(navigator.onLine), page: location.pathname };
+      var body = JSON.stringify(info);
+      var beacon = false;
+      try { beacon = !!(navigator.sendBeacon && navigator.sendBeacon('/api/log', new Blob([body], { type: 'text/plain;charset=UTF-8' }))); } catch (e) {}
+      if (!beacon && window.fetch) fetch('/api/log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body }).catch(function () {});
+      (window.dataLayer = window.dataLayer || []).push({ event: 'debug_JS_ERROR', message: info.message, source: info.source, line: info.line });
+      if (window.clarity) { clarity('event', 'JS_ERROR'); clarity('set', 'erro', 'JS_ERROR'); clarity('upgrade', 'JS_ERROR'); }
+    } catch (e) {} finally { busy = false; }
+  }
+  window.addEventListener('error', function (e) { if (e && e.target && e.target !== window) return; report(e.message, e.filename, e.lineno); });
+  window.addEventListener('unhandledrejection', function (e) { var r = e && e.reason; report('Promise rejeitada: ' + ((r && r.message) || r), r && r.fileName, r && r.lineNumber); });
+})();
 </script>
 
 <style>
@@ -353,6 +374,17 @@ button{font:inherit;color:inherit}
 .done-list dt{color:var(--muted);font-size:.9375rem}
 .done-list dd{font-weight:500}
 .done-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+
+/* salvando / erro ao salvar */
+.btn,.opt,.back,.link-wa{touch-action:manipulation}
+.btn.is-busy{cursor:progress}
+.btn.is-busy .arr{display:none}
+.btn.is-busy::after{content:"";flex:none;width:16px;height:16px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.save-slow{font-size:.875rem;color:var(--muted)}
+.save-err{padding:14px 16px;border:1px solid rgba(255,155,155,.45);border-radius:var(--r);background:rgba(255,155,155,.07);font-size:.9375rem}
+.save-err strong{display:block;color:var(--error);font-weight:600}
+.save-err-alt{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;margin-top:10px}
 
 /* ── CTA fixo no celular ── */
 .sticky{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:12px var(--pad) calc(12px + env(safe-area-inset-bottom));background:rgba(8,11,16,.96);border-top:1px solid var(--line);transform:translateY(110%);transition:transform .3s ease;visibility:hidden}
@@ -691,9 +723,11 @@ button{font:inherit;color:inherit}
 
         <fieldset class="step" data-key="name">
           <legend class="q" tabindex="-1">Como posso te chamar?</legend>
-          <div class="field">
-            <label class="sr" for="fName">Seu nome</label>
+          <div class="field" style="margin-top:6px">
+            <label class="lbl" for="fName">Seu nome</label>
             <input class="inp" id="fName" name="name" type="text" autocomplete="given-name" placeholder="Seu nome" maxlength="80" aria-describedby="e-name">
+            <label class="lbl" for="fWhats">WhatsApp <small>(com DDD)</small></label>
+            <input class="inp" id="fWhats" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(67) 99999-9999" maxlength="16" aria-describedby="e-name">
           </div>
           <p class="err" id="e-name" role="alert"></p>
         </fieldset>
@@ -773,21 +807,29 @@ button{font:inherit;color:inherit}
           <p class="err" id="e-budget" role="alert"></p>
         </fieldset>
 
-        <fieldset class="step" data-key="contact" hidden>
-          <legend class="q" tabindex="-1">Para onde eu mando a confirmação?</legend>
-          <div class="field" style="margin-top:14px">
-            <label class="lbl" for="fWhats">WhatsApp</label>
-            <input class="inp" id="fWhats" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(67) 99999-9999" maxlength="16" aria-describedby="e-contact">
-            <label class="lbl" for="fEmail">E-mail <small>(opcional, para receber o convite da reunião)</small></label>
-            <input class="inp" id="fEmail" name="email" type="email" autocomplete="email" placeholder="voce@empresa.com.br" maxlength="120">
+        <fieldset class="step" data-key="email" hidden>
+          <legend class="q" tabindex="-1">Quer receber o convite da reunião por e-mail?</legend>
+          <p class="hint">Opcional. Se deixar em branco, eu confirmo pelo WhatsApp.</p>
+          <div class="field">
+            <label class="sr" for="fEmail">E-mail</label>
+            <input class="inp" id="fEmail" name="email" type="email" autocomplete="email" placeholder="voce@empresa.com.br" maxlength="120" aria-describedby="e-email">
           </div>
-          <p class="err" id="e-contact" role="alert"></p>
+          <p class="err" id="e-email" role="alert"></p>
           <p class="hint" style="margin-top:16px">Na próxima etapa você escolhe o melhor horário para conversarmos.</p>
         </fieldset>
 
         <div class="form-foot">
           <button type="submit" class="btn btn-primary" id="nextBtn">Próxima pergunta <span class="arr" aria-hidden="true">→</span></button>
-          <p class="privacy">Sem compromisso. Seus dados são usados só para eu falar com você sobre o projeto.</p>
+          <p class="save-slow" id="saveSlow" role="status" hidden>Ainda salvando… a conexão está lenta. Não feche a página.</p>
+          <div class="save-err" id="saveErr" role="alert" hidden>
+            <strong>Não conseguimos salvar suas respostas.</strong>
+            Verifique sua conexão e toque em "Tentar novamente".
+            <div class="save-err-alt">
+              <a class="link-wa" id="saveErrWa" href="https://wa.me/5567999524900" target="_blank" rel="noopener">Ou envie suas respostas pelo WhatsApp</a>
+              <button type="button" class="back" id="saveSkip" hidden>Continuar para a agenda mesmo assim →</button>
+            </div>
+          </div>
+          <p class="privacy">Sem compromisso. Suas respostas são salvas enquanto você preenche e usadas só para eu falar com você sobre o projeto.</p>
         </div>
       </form>
 
@@ -1017,7 +1059,8 @@ button{font:inherit;color:inherit}
   var form = $('#apply'), steps = $$('.step', form), total = steps.length;
   var nextBtn = $('#nextBtn'), backBtn = $('#back'), count = $('#count'), barFill = $('#barFill');
   var section = $('#aplicacao'), panel = $('#panel');
-  var data = {}, idx = 0, started = false, leadId = null, submitting = false;
+  var data = {}, idx = 0, started = false, leadId = null, createdAt = null, submitting = false;
+  var finalSent = false, finalFailures = 0, lastStepChange = 0;
 
   // faixas de investimento
   var bo = $('#budgetOpts');
@@ -1028,7 +1071,7 @@ button{font:inherit;color:inherit}
     l.appendChild(i); l.appendChild(s); bo.appendChild(l);
   });
 
-  var NEXT_LABEL = { contact: 'Ver horários disponíveis' };
+  var NEXT_LABEL = { email: 'Ver horários disponíveis' };
 
   function uid() {
     if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
@@ -1036,9 +1079,40 @@ button{font:inherit;color:inherit}
   }
   function firstName() { return (data.name || '').split(/\s+/)[0]; }
 
+  /* ── Diagnóstico do funil (temporário) ──
+     Eventos FORM_* e LEAD_SAVE_* vão para o dataLayer e para o Clarity (dá para filtrar as gravações por eles).
+     Não vão para o Meta Pixel. Sem dados pessoais: só etapa, tempo, navegador e códigos de erro.
+     Erros também vão para /api/log (log da Vercel). No console só em localhost. */
+  var DEV = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  var UA = navigator.userAgent || '';
+  var BROWSER = /Instagram/i.test(UA) ? 'instagram' : /FBAN|FBAV|FB_IAB|FBIOS/i.test(UA) ? 'facebook' : /Edg\//.test(UA) ? 'edge' : /CriOS|Chrome\//.test(UA) ? 'chrome' : /Safari\//.test(UA) ? 'safari' : 'outro';
+  function stepInfo() { var s = steps[idx]; return { step_number: idx + 1, step_name: s ? s.dataset.key : '' }; }
+  function debug(name, extra) {
+    var info = Object.assign({ event: 'debug_' + name, debug_event: name, timestamp: new Date().toISOString(), user_agent: UA.slice(0, 200), screen_width: window.innerWidth, browser: BROWSER }, stepInfo(), extra || {});
+    try { window.dataLayer.push(info); } catch (e) {}
+    try { if (window.clarity) { clarity('event', name); if (/ERROR/.test(name)) { clarity('set', 'erro', name); clarity('upgrade', name); } } } catch (e) {}
+    if (DEV) console.log('[debug]', name, info);
+  }
+  var remoteLogs = 0;
+  function remoteLog(name, extra) {
+    if (remoteLogs >= 8) return;
+    remoteLogs++;
+    var body = JSON.stringify(Object.assign({ event: name, lead_id: leadId || '', browser: BROWSER, online: String(navigator.onLine), screen_width: window.innerWidth, page: location.pathname }, stepInfo(), extra || {}));
+    try { if (navigator.sendBeacon && navigator.sendBeacon('/api/log', new Blob([body], { type: 'text/plain;charset=UTF-8' }))) return; } catch (e) {}
+    try { fetch('/api/log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body }).catch(function () {}); } catch (e) {}
+  }
+
+  // O mesmo lead_id sobrevive a um refresh no meio do formulário (24 h), para atualizar a mesma linha
+  var LEAD_KEY = 'ma_lead';
+  (function () {
+    var s = store.get(LEAD_KEY);
+    if (s && s.id && s.created_at && Date.now() - Date.parse(s.created_at) < 864e5) { leadId = s.id; createdAt = s.created_at; }
+  })();
+
   function show(n, focus) {
     steps.forEach(function (s, k) { s.hidden = k !== n; s.classList.toggle('step-in', k === n && focus); });
     idx = n;
+    if (focus) { lastStepChange = Date.now(); debug('FORM_STEP_VIEW'); } // só troca de etapa conta para o toque duplo
     count.textContent = 'Pergunta ' + (n + 1) + ' de ' + total;
     barFill.style.width = (n / total * 100) + '%';
     backBtn.hidden = n === 0;
@@ -1057,6 +1131,7 @@ button{font:inherit;color:inherit}
     var e = step.querySelector('.err'); e.textContent = msg || '';
     $$('.inp', step).forEach(function (i) { i.removeAttribute('aria-invalid'); });
     if (msg && input) { input.setAttribute('aria-invalid', 'true'); input.focus(); }
+    if (msg) debug('FORM_VALIDATION_ERROR', { field: input ? input.id : '' });
     return !msg;
   }
   function checked(step, name) { var i = step.querySelector('input[name="' + name + '"]:checked'); return i ? i.value : ''; }
@@ -1067,7 +1142,10 @@ button{font:inherit;color:inherit}
       case 'name':
         v = $('#fName').value.trim();
         if (v.length < 2) return setErr(s, 'Me diz como posso te chamar.', $('#fName'));
-        data.name = v; break;
+        var w = phoneDigits($('#fWhats').value);
+        if (w.length < 10 || w.charAt(0) === '0') return setErr(s, 'Confira o WhatsApp com DDD. Ex.: (67) 99999-9999', $('#fWhats'));
+        $('#fWhats').value = formatPhone(w);
+        data.name = v; data.whatsapp = $('#fWhats').value.trim(); break;
       case 'company':
         v = $('#fCompany').value.trim();
         if (v.length < 2) return setErr(s, 'Pode ser o nome do projeto, se a empresa ainda não tiver um.', $('#fCompany'));
@@ -1097,24 +1175,26 @@ button{font:inherit;color:inherit}
         v = checked(s, 'budget');
         if (!v) return setErr(s, 'Escolha uma faixa, ou a opção de conversar na call.');
         data.budget = v; break;
-      case 'contact':
-        var w = $('#fWhats').value.replace(/\D/g, '');
-        if (w.length < 10 || w.length > 13) return setErr(s, 'Confira o WhatsApp com DDD. Ex.: (67) 99999-9999', $('#fWhats'));
+      case 'email':
         var em = $('#fEmail').value.trim();
         if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) return setErr(s, 'Esse e-mail parece incompleto.', $('#fEmail'));
-        data.whatsapp = $('#fWhats').value.trim(); data.email = em; break;
+        data.email = em; break;
     }
     return setErr(s, '');
   }
 
-  function advance() {
-    if (submitting || !validate(idx)) return;
+  function advance(via) {
+    if (submitting) return;
+    // toque duplo: o 2º toque cairia na etapa nova e mostraria um erro que a pessoa não causou
+    if (Date.now() - lastStepChange < 300) return;
+    debug('FORM_NEXT_CLICK', { via: via || 'botao' });
+    if (!validate(idx)) return;
     track('Form_Step', { step: idx + 1, step_name: steps[idx].dataset.key });
-    if (idx < total - 1) show(idx + 1, true); else submit();
+    if (idx < total - 1) { savePartial(); show(idx + 1, true); } else submit();
   }
 
-  form.addEventListener('submit', function (e) { e.preventDefault(); advance(); });
-  backBtn.addEventListener('click', function () { if (idx > 0) show(idx - 1, true); });
+  form.addEventListener('submit', function (e) { e.preventDefault(); advance('botao'); });
+  backBtn.addEventListener('click', function () { if (idx > 0 && !submitting) show(idx - 1, true); });
 
   form.addEventListener('input', function () { if (!started) { started = true; track('Form_Start'); } });
   form.addEventListener('change', function (e) {
@@ -1128,7 +1208,7 @@ button{font:inherit;color:inherit}
   form.addEventListener('click', function (e) {
     var t = e.target;
     if (t.type !== 'radio' || e.detail === 0 || t.hasAttribute('data-noauto')) return;
-    setTimeout(function () { if (steps[idx].contains(t) && t.checked) advance(); }, 220);
+    setTimeout(function () { if (steps[idx].contains(t) && t.checked) advance('opcao'); }, 220);
   });
   // abre o campo extra já focado quando a pessoa escolhe "Outro" / "Sim"
   $$('input[data-noauto]', form).forEach(function (i) {
@@ -1139,50 +1219,124 @@ button{font:inherit;color:inherit}
     });
   });
 
-  // máscara de WhatsApp
-  $('#fWhats').addEventListener('input', function (e) {
-    var d = e.target.value.replace(/\D/g, '').slice(0, 11), out = d;
-    if (d.length > 2) out = '(' + d.slice(0, 2) + ') ' + d.slice(2);
-    if (d.length > 7) out = '(' + d.slice(0, 2) + ') ' + d.slice(2, d.length - 4) + '-' + d.slice(-4);
-    e.target.value = out;
-  });
+  // WhatsApp: tira o +55 e o 0 da frente que o preenchimento automático do celular coloca, e aplica a máscara
+  function phoneDigits(v) {
+    var d = String(v || '').replace(/\D/g, '');
+    if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
+    if (d.length > 10 && d.charAt(0) === '0') d = d.slice(1);
+    return d.slice(0, 11);
+  }
+  function formatPhone(d) {
+    if (d.length > 7) return '(' + d.slice(0, 2) + ') ' + d.slice(2, d.length - 4) + '-' + d.slice(-4);
+    if (d.length > 2) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+    return d;
+  }
+  $('#fWhats').addEventListener('input', function (e) { e.target.value = formatPhone(phoneDigits(e.target.value)); });
+
+  // FORM_OPEN: o formulário apareceu na tela pela primeira vez
+  if ('IntersectionObserver' in window) {
+    var openIO = new IntersectionObserver(function (es) {
+      if (es[0].isIntersecting) { debug('FORM_OPEN'); debug('FORM_STEP_VIEW'); openIO.disconnect(); }
+    }, { threshold: 0.3 });
+    openIO.observe(panel);
+  }
 
   show(0, false);
 
-  /* ── Envio do lead (antes da agenda) ── */
-  function postJSON(url, payload, timeoutMs) {
+  /* ── Salvamento do lead ──
+     Toda escrita é "upsert" pelo lead_id na planilha (mesma linha), então repetir um envio é seguro.
+       1ª etapa (nome + WhatsApp) cria a linha "incompleto"
+       → etapas seguintes atualizam a linha: um envio por vez, o mais recente substitui o que estava na fila
+       → envio final ESPERA a confirmação da planilha. Se falhar: a pessoa vê o erro, pode tentar de novo,
+         mandar pelo WhatsApp ou seguir para a agenda. Lead (Meta) só sai com a confirmação.
+     O que ainda não foi confirmado fica no navegador (ma_outbox) e é reenviado ao sair da página
+     (sendBeacon) e na próxima visita. */
+  var OUTBOX = 'ma_outbox';
+  function outbox() { var o = store.get(OUTBOX); return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; }
+  function boxKey(p) { return p.type === 'booking' ? p.id + ':agendamento' : p.id; }
+  function keep(p) {
+    var o = outbox(), k = boxKey(p);
+    if (p.type === 'partial' && o[k] && o[k].type === 'lead') return; // o final já está guardado
+    o[k] = p; store.set(OUTBOX, o);
+  }
+  function drop(p) {
+    var o = outbox(), k = boxKey(p);
+    if (o[k] && (o[k].rev || 0) <= (p.rev || 0)) { delete o[k]; store.set(OUTBOX, o); }
+  }
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  // POST na API; resolve sempre com { ok, status, error, ms } (nunca rejeita)
+  function postLead(p, timeoutMs) {
     var ctl = 'AbortController' in window ? new AbortController() : null;
-    var t = ctl ? setTimeout(function () { ctl.abort(); }, timeoutMs || 7000) : null;
-    return fetch(url, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload), keepalive: true, signal: ctl ? ctl.signal : undefined
+    var timer = ctl ? setTimeout(function () { ctl.abort(); }, timeoutMs) : null;
+    var t0 = Date.now();
+    return fetch(C.leadEndpoint, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
+      body: JSON.stringify(p), signal: ctl ? ctl.signal : undefined
     }).then(function (r) {
-      if (t) clearTimeout(t);
-      if (!r.ok) return false;
-      // salvo de verdade = a API repassou para a planilha/webhook (forwarded: false é só log)
-      return r.json().then(function (j) { return !!(j && j.ok && j.forwarded !== false); }, function () { return false; });
-    }).catch(function () { if (t) clearTimeout(t); return false; });
+      return r.text().then(function (txt) {
+        var j = null;
+        try { j = JSON.parse(txt); } catch (e) {}
+        var ok = r.ok && !!j && j.ok === true && j.forwarded !== false; // salvo = a planilha confirmou
+        return { ok: ok, status: r.status, error: ok ? '' : ((j && j.error) || 'http_' + r.status), ms: Date.now() - t0 };
+      });
+    }, function (err) {
+      return { ok: false, status: 0, error: err && err.name === 'AbortError' ? 'timeout' : 'rede', ms: Date.now() - t0 };
+    }).then(function (res) { if (timer) clearTimeout(timer); return res; });
   }
-  // tenta duas vezes; se não salvar, guarda no navegador para reenviar na próxima visita
-  function saveLead(payload) {
-    return postJSON(C.leadEndpoint, payload).then(function (ok) {
-      return ok || new Promise(function (r) { setTimeout(r, 1500); }).then(function () { return postJSON(C.leadEndpoint, payload); });
-    }).then(function (ok) {
-      if (!ok) { var q = store.get('ma_pending') || []; q.push(payload); store.set('ma_pending', q.slice(-10)); }
-      return ok;
-    });
+
+  // Envia com novas tentativas (2 s, 4 s…). Erro 400 (dado inválido) não adianta repetir.
+  function save(p, kind, tries) {
+    p.rev = p.rev || Date.now();
+    keep(p);
+    var attempt = 0;
+    function go() {
+      attempt++;
+      debug('LEAD_SAVE_START', { kind: kind, attempt: attempt });
+      return postLead(p, 30000).then(function (r) {
+        if (r.ok) {
+          debug('LEAD_SAVE_SUCCESS', { kind: kind, attempt: attempt, ms: r.ms });
+          drop(p);
+          return r;
+        }
+        debug('LEAD_SAVE_ERROR', { kind: kind, attempt: attempt, status: r.status, error: r.error, ms: r.ms });
+        remoteLog('LEAD_SAVE_ERROR', { kind: kind, attempt: attempt, status: r.status, error: r.error });
+        if (attempt < tries && r.status !== 400) return wait(attempt * 2000).then(go);
+        return r;
+      });
+    }
+    return go();
   }
+
   function leadSaved(p) {
-    if (p.ma_hp) return; // robô: não conta como conversão
+    if (p.ma_hp) return; // campo invisível preenchido: provável robô, não conta como conversão
     track('Form_Complete', { event_id: p.id, lead_id: p.id, budget: p.budget, timeline: p.timeline, segment: p.segment });
   }
-  // reenvia os dados que falharam numa visita anterior (sem disparar Lead: ele só sai no envio do formulário)
+
+  // Reenvia o que ficou sem confirmação numa visita anterior (sem disparar Lead)
   (function flush() {
-    var q = store.get('ma_pending');
-    if (!q || !q.length) return;
-    store.set('ma_pending', []);
-    q.forEach(function (p) { saveLead(p); });
+    var old = store.get('ma_pending'); // formato da versão anterior
+    if (old && old.length) { old.forEach(function (p) { p.rev = p.rev || 1; keep(p); }); store.set('ma_pending', []); }
+    var o = outbox();
+    Object.keys(o).forEach(function (k) {
+      var p = o[k];
+      save(p, 'reenvio', 1).then(function (r) { if (r.ok) remoteLog('LEAD_SAVE_RECOVERED', { kind: p.type }); });
+    });
   })();
+
+  // Saiu da página com algo ainda não confirmado: manda de novo por sendBeacon (sobrevive ao fechamento).
+  // Continua guardado: se o beacon não chegar, a próxima visita reenvia.
+  var lastExitFlush = 0;
+  function flushOnExit() {
+    if (!navigator.sendBeacon || Date.now() - lastExitFlush < 3000) return; // pagehide e visibilitychange chegam juntos
+    lastExitFlush = Date.now();
+    var o = outbox();
+    Object.keys(o).forEach(function (k) {
+      try { navigator.sendBeacon(C.leadEndpoint, new Blob([JSON.stringify(Object.assign({}, o[k], { via: 'beacon' }))], { type: 'text/plain;charset=UTF-8' })); } catch (e) {}
+    });
+  }
+  window.addEventListener('pagehide', flushOnExit);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flushOnExit(); });
 
   function attribution() {
     return {
@@ -1197,32 +1351,96 @@ button{font:inherit;color:inherit}
       'Olá, Marcelo! Acabei de responder a aplicação no seu site.',
       '',
       'Nome: ' + data.name,
-      'Empresa: ' + data.company,
-      'Segmento: ' + data.segment,
-      'Já tem site: ' + data.has_site + (data.site_url ? ' (' + data.site_url + ')' : ''),
+      'WhatsApp: ' + (data.whatsapp || ''),
+      'Empresa: ' + (data.company || ''),
+      'Segmento: ' + (data.segment || ''),
+      'Já tem site: ' + (data.has_site || '') + (data.site_url ? ' (' + data.site_url + ')' : ''),
       'Procuro: ' + (data.looking_for || []).join(', '),
-      'Prazo: ' + data.timeline,
-      'Investimento: ' + data.budget,
+      'Prazo: ' + (data.timeline || ''),
+      'Investimento: ' + (data.budget || ''),
       '',
       'Quero combinar um horário para a nossa conversa.'
     ].join('\n');
   }
 
-  function submit() {
-    submitting = true;
-    nextBtn.disabled = true;
-    nextBtn.firstChild.nodeValue = 'Salvando suas respostas… ';
-    leadId = uid();
-    var payload = Object.assign({
-      type: 'lead', id: leadId, created_at: new Date().toISOString(),
-      name: data.name, company: data.company, segment: data.segment,
-      has_site: data.has_site, site_url: data.site_url, looking_for: data.looking_for.join(', '),
-      timeline: data.timeline, budget: data.budget, whatsapp: data.whatsapp, email: data.email,
+  // Tudo que já foi respondido, sempre com o mesmo id: a planilha atualiza a mesma linha a cada envio
+  function leadPayload(type, status) {
+    if (!leadId) { leadId = uid(); createdAt = new Date().toISOString(); store.set(LEAD_KEY, { id: leadId, created_at: createdAt }); }
+    return Object.assign({
+      type: type, id: leadId, created_at: createdAt, status: status, rev: Date.now(),
+      last_step: (idx + 1) + ' de ' + total + ' · ' + steps[idx].dataset.key,
+      name: data.name, whatsapp: data.whatsapp, company: data.company || '', segment: data.segment || '',
+      has_site: data.has_site || '', site_url: data.site_url || '', looking_for: (data.looking_for || []).join(', '),
+      timeline: data.timeline || '', budget: data.budget || '', email: data.email || '',
       page: location.href.slice(0, 500), ma_hp: $('#fHp').value
     }, attribution());
-    saveLead(payload).then(function (ok) {
-      if (ok) leadSaved(payload);
-      showSchedule(ok);
+  }
+
+  // Etapas intermediárias: não seguram a pessoa. Um envio por vez; se ela avança mais rápido que a planilha
+  // responde, só a versão mais recente é enviada (menos requisições, nada se perde).
+  var partialNext = null, partialBusy = false;
+  function savePartial() {
+    if (finalSent) return;
+    var p = leadPayload('partial', 'incompleto');
+    keep(p);
+    partialNext = p;
+    pumpPartial();
+  }
+  function pumpPartial() {
+    if (partialBusy || !partialNext || finalSent) return;
+    var p = partialNext;
+    partialNext = null;
+    partialBusy = true;
+    save(p, 'parcial', 3).then(function () { partialBusy = false; pumpPartial(); });
+  }
+
+  /* Envio final: espera a planilha confirmar antes de seguir */
+  var slowTimer = null;
+  function setBusy(on) {
+    nextBtn.disabled = on;
+    backBtn.disabled = on;
+    nextBtn.classList.toggle('is-busy', on);
+    nextBtn.setAttribute('aria-busy', on ? 'true' : 'false');
+    nextBtn.firstChild.nodeValue = on ? 'Salvando suas respostas… ' : (finalFailures ? 'Tentar novamente ' : (NEXT_LABEL[steps[idx].dataset.key] || 'Próxima pergunta') + ' ');
+    clearTimeout(slowTimer);
+    $('#saveSlow').hidden = true;
+    if (on) slowTimer = setTimeout(function () { $('#saveSlow').hidden = false; }, 6000);
+  }
+  function showSaveError() {
+    var box = $('#saveErr');
+    box.hidden = false;
+    $('#saveErrWa').href = waUrl(summary());
+    $('#saveSkip').hidden = finalFailures < 2;
+    box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
+  }
+  $('#saveErrWa').addEventListener('click', function () { track('WhatsApp_Click', { location: 'erro-salvamento' }); });
+  $('#saveSkip').addEventListener('click', function () {
+    debug('FORM_SKIP_AFTER_ERROR');
+    $('#saveErr').hidden = true;
+    showSchedule(false); // as respostas continuam guardadas no navegador e são reenviadas depois
+  });
+
+  function submit() {
+    if (submitting) return;
+    submitting = true;
+    finalSent = true;
+    partialNext = null;
+    $('#saveErr').hidden = true;
+    setBusy(true);
+    var payload = leadPayload('lead', 'completo');
+    save(payload, 'final', 2).then(function (r) {
+      if (r.ok) {
+        setBusy(false);
+        leadSaved(payload);
+        debug('FORM_COMPLETE', { ms: r.ms });
+        try { localStorage.removeItem(LEAD_KEY); } catch (e) {}
+        showSchedule(true);
+        return;
+      }
+      finalFailures++;
+      submitting = false;
+      setBusy(false);
+      showSaveError();
     });
   }
 
@@ -1275,7 +1493,7 @@ button{font:inherit;color:inherit}
         }
       });
     };
-    s.onerror = function () { $('#calWrap').hidden = true; $('#waBox').hidden = false; };
+    s.onerror = function () { $('#calWrap').hidden = true; $('#waBox').hidden = false; debug('CALENDAR_ERROR'); remoteLog('LEAD_SAVE_ERROR', { kind: 'calendly', error: 'widget_nao_carregou' }); };
     document.head.appendChild(s);
   }
 
@@ -1291,7 +1509,7 @@ button{font:inherit;color:inherit}
   window.addEventListener('message', function (e) {
     if (e.origin !== 'https://calendly.com' || !e.data || typeof e.data.event !== 'string' || !leadId) return;
     var ev = e.data.event;
-    if (ev === 'calendly.event_type_viewed' && !calendarSeen) { calendarSeen = true; track('Calendar_View', { lead_id: leadId, provider: 'calendly' }); }
+    if (ev === 'calendly.event_type_viewed' && !calendarSeen) { calendarSeen = true; track('Calendar_View', { lead_id: leadId, provider: 'calendly' }); debug('CALENDAR_OPEN'); }
     if (ev === 'calendly.date_and_time_selected') bookingClick('calendly');
     if (ev === 'calendly.event_scheduled') onBooked(e.data.payload || {});
   });
@@ -1308,7 +1526,7 @@ button{font:inherit;color:inherit}
       ? fetch(C.bookingEndpoint + '?event=' + encodeURIComponent(eventUri)).then(function (r) { return r.status === 200 ? r.json() : null; }).catch(function () { return null; })
       : Promise.resolve(null);
     details.then(function (d) {
-      saveLead(Object.assign({ type: 'booking', id: leadId, name: data.name, whatsapp: data.whatsapp, event_uri: eventUri, invitee_uri: inviteeUri, start: d && d.start || '', created_at: new Date().toISOString() }, attribution()));
+      save(Object.assign({ type: 'booking', id: leadId, name: data.name, whatsapp: data.whatsapp, event_uri: eventUri, invitee_uri: inviteeUri, start: d && d.start || '', created_at: createdAt || new Date().toISOString() }, attribution()), 'agendamento', 3);
       renderDone(d);
     });
   }
