@@ -924,8 +924,16 @@ button{font:inherit;color:inherit}
     a.href = waUrl('Olá, Marcelo! Vim pelo seu site e quero conversar sobre um projeto.');
     a.addEventListener('click', function () { track('WhatsApp_Click', { location: a.dataset.loc || '' }); });
   });
+  // Os CTAs levam direto ao formulário (1ª pergunta), não ao início da seção: no celular a introdução
+  // ocupa a tela inteira e o formulário ficava abaixo da dobra, e a pessoa tocava no CTA de novo achando que não funcionou.
   $$('[data-cta]').forEach(function (a) {
-    a.addEventListener('click', function () { track('CTA_Click', { location: a.dataset.cta }); });
+    a.addEventListener('click', function (e) {
+      track('CTA_Click', { location: a.dataset.cta });
+      var panel = $('#panel');
+      if (!panel) return; // sem o formulário, a âncora #aplicacao funciona normalmente
+      e.preventDefault();
+      window.scrollTo({ top: panel.getBoundingClientRect().top + window.scrollY - 76, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
   });
 
   /* ── Header e CTA fixo ── */
