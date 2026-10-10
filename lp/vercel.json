@@ -1,6 +1,11 @@
 {
   "functions": {
-    "api/lead.js": { "maxDuration": 30 },
+    "api/lead.js": { "maxDuration": 60 },
+    "api/sync.js": { "maxDuration": 60 },
+    "api/leads.js": { "maxDuration": 60 },
     "api/log.js": { "maxDuration": 5 }
-  }
+  },
+  "crons": [
+    { "path": "/api/sync", "schedule": "0 12 * * *" }
+  ]
 }

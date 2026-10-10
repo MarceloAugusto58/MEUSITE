@@ -1,12 +1,15 @@
-// Recebe as respostas da aplicação (parcial e final) e o agendamento, e repassa para LEAD_WEBHOOK_URL (Apps Script).
-// Toda escrita é "upsert" pelo id na planilha, então reenviar o mesmo lead é seguro (não duplica linha).
+// Recebe as respostas da aplicação (parcial e final) e o agendamento.
 //
-// Variáveis de ambiente (Vercel → Settings → Environment Variables):
-//   LEAD_WEBHOOK_URL     URL que recebe o JSON (Web App do Google Apps Script)
-//   LEAD_WEBHOOK_SECRET  vai no campo "secret" para o Apps Script conferir a origem
+// 1. Grava o envio no armazenamento privado da Vercel (Blob) e confirma ao navegador na hora (< 1 s).
+//    O Google Apps Script às vezes leva 10–25 s ou falha; o visitante não espera mais por ele.
+// 2. Em segundo plano (waitUntil) repassa para a planilha, com novas tentativas. Se não der,
+//    fica em "pendentes/" e é reenviado no próximo envio bem-sucedido ou pelo cron diário (api/sync).
+// 3. Se o Blob falhar, faz como antes: espera a planilha confirmar.
 //
-// Logs (Vercel → Logs), uma linha JSON por evento: LEAD_SAVE_START, LEAD_SAVE_SUCCESS, LEAD_SAVE_ERROR.
-// Só o LEAD_SAVE_ERROR leva o lead inteiro, para dar para recuperar o contato à mão se a planilha falhar.
+// Logs (Vercel → Logs): LEAD_SAVE_START/SUCCESS/ERROR, LEAD_SHEET_SUCCESS/ERROR.
+
+const { waitUntil } = require('@vercel/functions');
+const { log, saveEvent, forwardToSheet, markPending, clearPending, syncPending } = require('./_store');
 
 const FIELDS = [
   'type', 'id', 'created_at', 'status', 'last_step',
@@ -16,36 +19,18 @@ const FIELDS = [
   'event_uri', 'invitee_uri', 'start'
 ];
 const MAX_LEN = 500;
-const ATTEMPT_TIMEOUT = 12000; // o Apps Script leva 2–4 s; acordando pode passar de 8 s
-const ATTEMPTS = 2;
 
-const log = (event, info) => console.log(JSON.stringify(Object.assign({ event, at: new Date().toISOString() }, info)));
-
-async function forward(url, lead) {
-  const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), ATTEMPT_TIMEOUT);
-  try {
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...lead, secret: process.env.LEAD_WEBHOOK_SECRET || '' }),
-      redirect: 'follow',
-      signal: ctl.signal
-    });
-    const text = await r.text();
-    if (!r.ok) return { ok: false, retry: r.status >= 500 || r.status === 429, error: 'webhook_http_' + r.status, status: r.status };
-    let reply = null;
-    try { reply = JSON.parse(text); } catch (e) {}
-    // o Apps Script responde 200 até quando recusa (ex.: senha errada); só conta como salvo se ele disser ok
-    if (reply && reply.ok === true) return { ok: true, status: r.status };
-    if (reply && reply.ok === false) return { ok: false, retry: false, error: 'webhook_' + (reply.error || 'recusou'), status: r.status };
-    // HTML = erro do próprio Apps Script (exceção, cota, lock ocupado) ou URL/permissão errada
-    return { ok: false, retry: true, error: /<html/i.test(text) ? 'webhook_html' : 'webhook_resposta_invalida', status: r.status };
-  } catch (err) {
-    return { ok: false, retry: true, error: err.name === 'AbortError' ? 'webhook_timeout' : 'webhook_rede' };
-  } finally {
-    clearTimeout(timer);
+async function toSheet(lead, meta) {
+  const r = await forwardToSheet(lead);
+  if (r.ok) {
+    log('LEAD_SHEET_SUCCESS', { ...meta, attempts: r.attempts, ms: r.ms });
+    await clearPending(lead);
+    await syncPending(3, 15000); // aproveita que a planilha respondeu para mandar o que estava pendente
+  } else {
+    log('LEAD_SHEET_ERROR', { ...meta, error: r.error, attempts: r.attempts, ms: r.ms });
+    await markPending(lead, r.error);
   }
+  return r;
 }
 
 module.exports = async (req, res) => {
@@ -80,23 +65,22 @@ module.exports = async (req, res) => {
   lead.received_at = new Date().toISOString();
 
   const meta = { id: lead.id, type: lead.type, step: lead.last_step || '', via: body.via || 'fetch' };
-  const url = process.env.LEAD_WEBHOOK_URL;
-  if (!url) {
-    log('LEAD_SAVE_ERROR', { ...meta, error: 'webhook_nao_configurado', lead });
-    return res.status(503).json({ ok: false, error: 'webhook_nao_configurado' });
-  }
-
   const t0 = Date.now();
   log('LEAD_SAVE_START', meta);
-  let result;
-  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
-    result = await forward(url, lead);
-    if (result.ok) {
-      log('LEAD_SAVE_SUCCESS', { ...meta, attempt, ms: Date.now() - t0 });
-      return res.status(200).json({ ok: true, forwarded: true });
-    }
-    if (!result.retry) break;
+
+  // 1. cópia de segurança na Vercel: se gravou, o lead está salvo
+  if (await saveEvent(lead)) {
+    log('LEAD_SAVE_SUCCESS', { ...meta, store: 'blob', ms: Date.now() - t0 });
+    waitUntil(toSheet(lead, meta).catch(err => log('LEAD_SHEET_ERROR', { ...meta, error: err.message })));
+    return res.status(200).json({ ok: true, forwarded: true, stored: 'blob' });
   }
-  log('LEAD_SAVE_ERROR', { ...meta, error: result.error, status: result.status || null, ms: Date.now() - t0, lead });
-  return res.status(502).json({ ok: false, error: result.error });
+
+  // 2. sem Blob: espera a planilha (comportamento anterior)
+  const r = await forwardToSheet(lead);
+  if (r.ok) {
+    log('LEAD_SAVE_SUCCESS', { ...meta, store: 'planilha', attempts: r.attempts, ms: Date.now() - t0 });
+    return res.status(200).json({ ok: true, forwarded: true, stored: 'planilha' });
+  }
+  log('LEAD_SAVE_ERROR', { ...meta, error: r.error, attempts: r.attempts, ms: Date.now() - t0, lead });
+  return res.status(502).json({ ok: false, error: r.error });
 };
