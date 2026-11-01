@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus · Hard Copy | Marcelo Augusto</title>
+<meta name="description" content="Nexus: sistema interno feito sob medida para a Hard Copy, que centraliza clientes, atendimento, projetos, entregas, financeiro e treinamento da equipe em um só lugar.">
+<link rel="canonical" href="https://marceloaugustosites.com.br/hdcpy">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://marceloaugustosites.com.br/hdcpy">
+<meta property="og:title" content="Nexus · Sistema de gestão da Hard Copy">
+<meta property="og:description" content="Um SaaS interno que automatiza e organiza a operação inteira de uma agência: do primeiro contato ao pagamento.">
+<meta property="og:image" content="https://marceloaugustosites.com.br/hdcpy/img/05-financeiro-entregas.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b10;
+  --bg-card: #0f1420;
+  --pink: #f72d7a;
+  --pink-dim: rgba(247,45,122,0.12);
+  --cyan: #00d4e8;
+  --white: #eef2ff;
+  --muted: #7a8499;
+  --border: rgba(255,255,255,0.07);
+  --radius: 16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+img{display:block;max-width:100%;height:auto;}
+.intro>*,.module>*,.shot-pair>*{min-width:0;}
+a{color:inherit;}
+
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(8,11,16,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;text-decoration:none;}
+.nav-back{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.18);padding:10px 20px;font-size:12px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;text-decoration:none;transition:border-color .2s,background .2s;}
+.nav-back:hover{border-color:var(--pink);background:var(--pink-dim);}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 48px;}
+.pill{display:inline-block;border:1px solid rgba(247,45,122,.35);background:var(--pink-dim);color:var(--pink);font-size:11px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;padding:7px 16px;border-radius:999px;margin-bottom:22px;}
+.hl{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;line-height:.98;}
+.pk{color:var(--pink);}
+.muted{color:var(--muted);}
+
+/* hero */
+.hero{position:relative;padding:110px 0 70px;overflow:hidden;}
+.hero::before{content:"";position:absolute;inset:-30% -10% auto;height:620px;background:radial-gradient(ellipse at 50% 30%,rgba(247,45,122,.22),transparent 60%),radial-gradient(ellipse at 80% 10%,rgba(124,58,237,.18),transparent 55%);pointer-events:none;}
+.hero .wrap{position:relative;text-align:center;}
+.hero h1{font-size:92px;margin-bottom:26px;}
+.hero p.lead{max-width:720px;margin:0 auto;font-size:19px;color:#b6bdd0;}
+.hero-shot{position:relative;margin-top:64px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 40px 120px -30px rgba(247,45,122,.45),0 0 0 1px rgba(247,45,122,.08);cursor:zoom-in;}
+.chrome{display:flex;gap:7px;padding:12px 14px;background:#0c0f17;border-bottom:1px solid var(--border);}
+.chrome i{width:11px;height:11px;border-radius:50%;background:#2a2f3c;}
+.chrome i:nth-child(1){background:#ff5f57;}.chrome i:nth-child(2){background:#febc2e;}.chrome i:nth-child(3){background:#28c840;}
+
+/* números */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:20px 0 0;}
+.stat{background:var(--bg);padding:30px 24px;text-align:center;}
+.stat b{display:block;font-family:'Barlow Condensed',sans-serif;font-size:50px;font-weight:900;line-height:1;margin-bottom:6px;}
+.stat span{font-size:13px;color:var(--muted);}
+
+/* contexto */
+.section{padding:110px 0 0;}
+.section h2{font-size:60px;margin-bottom:20px;}
+.intro{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+.intro p{color:#b6bdd0;margin-bottom:16px;}
+.problems{list-style:none;display:grid;gap:12px;}
+.problems li{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;font-size:15px;}
+.problems li::before{content:"";flex-shrink:0;width:8px;height:8px;margin-top:8px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px var(--pink);}
+
+/* módulos */
+.module{display:grid;grid-template-columns:5fr 7fr;gap:56px;align-items:center;padding:70px 0;border-top:1px solid var(--border);}
+.module:first-of-type{border-top:0;}
+.module.flip{grid-template-columns:7fr 5fr;}
+.module.flip .m-text{order:2;}
+.m-num{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:3px;color:var(--pink);margin-bottom:10px;}
+.m-text h3{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:16px;}
+.m-text p{color:#b6bdd0;margin-bottom:18px;}
+.m-text ul{list-style:none;display:grid;gap:9px;}
+.m-text li{font-size:15px;padding-left:22px;position:relative;}
+.m-text li::before{content:"→";position:absolute;left:0;color:var(--pink);}
+.shot{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:#0c0f17;cursor:zoom-in;transition:transform .35s ease,box-shadow .35s ease;box-shadow:0 30px 80px -40px rgba(0,0,0,.9);}
+.shot:hover{transform:translateY(-4px);box-shadow:0 34px 90px -36px rgba(247,45,122,.5);}
+.shot-pair{display:grid;gap:18px;}
+
+/* stack */
+.stack{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;}
+.stack span{border:1px solid var(--border);background:rgba(255,255,255,.03);border-radius:999px;padding:8px 16px;font-size:13px;color:#c8cee0;}
+
+.note{display:flex;gap:12px;align-items:flex-start;margin-top:28px;padding:16px 18px;border-radius:12px;border:1px solid rgba(254,188,46,.25);background:rgba(254,188,46,.06);font-size:14px;color:#e8d9b0;}
+
+/* cta */
+.cta{margin:120px 0 0;padding:90px 0;text-align:center;border-top:1px solid var(--border);background:radial-gradient(ellipse at 50% 0%,rgba(247,45,122,.14),transparent 60%);}
+.cta h2{font-size:64px;margin-bottom:18px;}
+.cta p{max-width:620px;margin:0 auto 34px;color:#b6bdd0;}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--pink);color:#fff;padding:16px 32px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:filter .2s,transform .2s;}
+.btn:hover{filter:brightness(1.1);transform:translateY(-2px);}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.2);margin-left:10px;}
+footer{padding:30px 48px;text-align:center;font-size:13px;color:var(--muted);border-top:1px solid var(--border);}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(4,6,10,.94);cursor:zoom-out;}
+.lb.open{display:flex;}
+.lb img{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 30px 120px rgba(0,0,0,.8);}
+.lb button{position:absolute;top:16px;right:20px;background:none;border:0;color:#fff;font-size:34px;line-height:1;cursor:pointer;}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.in{opacity:1;transform:none;}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}.shot{transition:none;}}
+
+@media (max-width:960px){
+  .hero h1{font-size:64px;}
+  .section h2,.cta h2{font-size:46px;}
+  .intro,.module,.module.flip{grid-template-columns:1fr;gap:30px;}
+  .module.flip .m-text{order:0;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:600px){
+  nav{padding:14px 16px;gap:12px;}
+  .nav-logo{font-size:17px;white-space:nowrap;}
+  .nav-back{padding:9px 14px;font-size:11px;}
+  .wrap{padding:0 16px;}
+  .hero{padding:70px 0 50px;}
+  .hero h1{font-size:46px;}
+  .hero p.lead{font-size:17px;}
+  .hero-shot{margin-top:40px;}
+  .section{padding:80px 0 0;}
+  .section h2,.cta h2{font-size:38px;}
+  .m-text h3{font-size:32px;}
+  .module{padding:50px 0;}
+  .stat b{font-size:40px;}
+  .btn.ghost{margin:12px 0 0;}
+  footer{padding:24px 16px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">MARCELO AUGUSTO</a>
+  <a href="/#portfolio" class="nav-back">← Voltar ao portfólio</a>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="pill">Case · Sistema sob medida</div>
+    <h1 class="hl">Nexus<br><span class="pk">O cérebro da Hard Copy</span></h1>
+    <p class="lead">Um SaaS interno que desenvolvi para a Hard Copy, agência de criativos e copy, organizar e automatizar a operação inteira, do primeiro contato com o cliente até a conferência do pagamento.</p>
+    <figure class="hero-shot reveal" data-full="img/05-financeiro-entregas.jpg">
+      <div class="chrome"><i></i><i></i><i></i></div>
+      <img src="img/05-financeiro-entregas.jpg" width="1862" height="942" alt="Tela de conferência de entregas do Nexus, com cards de cada entrega pendente e botões para marcar como pago ou não pago">
+    </figure>
+    <div class="stats reveal">
+      <div class="stat"><b>9</b><span>módulos integrados</span></div>
+      <div class="stat"><b>4</b><span>ferramentas conectadas<br>(ClickUp, Frame.io, Notion, planilhas)</span></div>
+      <div class="stat"><b>3</b><span>perfis de acesso<br>(admin, atendimento, editor)</span></div>
+      <div class="stat"><b>1</b><span>lugar só para<br>a equipe trabalhar</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="intro">
+      <div class="reveal">
+        <div class="pill">O problema</div>
+        <h2 class="hl">Operação espalhada<br><span class="pk">em 10 abas</span></h2>
+        <p>A Hard Copy cresceu rápido: dezenas de clientes ativos, uma equipe de pós-venda, editores entregando criativos toda semana e um financeiro conferindo contratos.</p>
+        <p>Tudo isso vivia espalhado entre ClickUp, Frame.io, Notion, planilhas e grupos de WhatsApp. Para responder "esse cliente já pagou?" alguém precisava abrir quatro ferramentas.</p>
+      </div>
+      <ul class="problems reveal">
+        <li>Formulários de onboarding perdidos, sem saber quem já preencheu o quê</li>
+        <li>Entregas enviadas ao cliente sem o financeiro conferir se o contrato estava pago</li>
+        <li>Nenhuma visão de produtividade por editor ou por atendente</li>
+        <li>Treinamento de quem entra dependendo de alguém explicar tudo de novo</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="modulos">
+    <div class="pill reveal">A solução</div>
+    <h2 class="hl reveal">Um módulo para<br><span class="pk">cada parte da operação</span></h2>
+
+    <article class="module reveal">
+      <div class="m-text">
+        <div class="m-num">01 · CLIENTE</div>
+        <h3>Busca instantânea de clientes</h3>
+        <p>Digite o nome ou o e-mail e o sistema mostra na hora todos os formulários que aquele cliente já preencheu. Novos envios são sincronizados sozinhos.</p>
+        <ul>
+          <li>Busca em tempo real enquanto digita</li>
+          <li>Sincronização automática dos formulários</li>
+        </ul>
+      </div>
+      <figure class="shot" data-full="img/01-buscar-cliente.jpg"><img src="img/01-buscar-cliente.jpg" width="1877" height="931" loading="lazy" alt="Tela Buscar Cliente com campo de busca por e-mail ou nome"></figure>
+    </article>
+
+    <article class="module flip reveal">
+      <div class="m-text">
+        <div class="m-num">02 · ATENDIMENTOS</div>
+        <h3>Relatório da equipe de pós-venda</h3>
+        <p>Quantos clientes cada atendente contatou, quantos clientes novos entraram e quem ficou com pendências no dia. Filtra por hoje, ontem, 7 dias ou mês e exporta em CSV.</p>
+        <ul>
+          <li>Indicadores do período no topo</li>
+          <li>Tabela por atendente com última atividade</li>
+          <li>Exportação de planilha com um clique</li>
+        </ul>
+      </div>
+      <figure class="shot" data-full="img/02-relatorio-atendimentos.jpg"><img src="img/02-relatorio-atendimentos.jpg" width="1859" height="930" loading="lazy" alt="Relatório de atendimentos com cards de totais e tabela por atendente"></figure>
+    </article>
+
+    <article class="module reveal">
+      <div class="m-text">
+        <div class="m-num">03 · GESTÃO DE PROJETO</div>
+        <h3>O ClickUp resumido em gráficos</h3>
+        <p>O Nexus lê a API do ClickUp e mostra o que mudou nos últimos 7 dias e quantas tarefas cada responsável movimentou hoje, com PDF pronto para a reunião.</p>
+        <ul>
+          <li>Integração direta com a API do ClickUp</li>
+          <li>Gráfico diário e ranking por responsável</li>
+          <li>Relatório em PDF gerado na hora</li>
+        </ul>
+      </div>
+      <figure class="shot" data-full="img/03-gestao-de-projeto.jpg"><img src="img/03-gestao-de-projeto.jpg" width="1862" height="933" loading="lazy" alt="Atividade do ClickUp com gráfico de barras por dia e por responsável"></figure>
+    </article>
+
+    <article class="module flip reveal">
+      <div class="m-text">
+        <div class="m-num">04 · ENTREGAS</div>
+        <h3>O editor sobe, o sistema organiza</h3>
+        <p>O editor informa o código do cliente e arrasta os vídeos. O Nexus guarda tudo no projeto certo do Frame.io e avisa o financeiro para conferir o pagamento antes de liberar ao cliente.</p>
+        <ul>
+          <li>Upload direto para o Frame.io via API</li>
+          <li>Separação entre vídeos prontos e editáveis</li>
+          <li>Validação dos campos antes de entregar</li>
+        </ul>
+      </div>
+      <figure class="shot" data-full="img/04-subir-entrega.jpg"><img src="img/04-subir-entrega.jpg" width="1873" height="936" loading="lazy" alt="Tela Subir entrega com formulário e área para arrastar vídeos"></figure>
+    </article>
+
+    <article class="module reveal">
+      <div class="m-text">
+        <div class="m-num">05 · FINANCEIRO</div>
+        <h3>Nenhuma entrega sai sem conferir o pagamento</h3>
+        <p>Cada entrega vira um card com o contrato, o que já foi pago e o que falta. O sistema cruza os dados e sinaliza sozinho quando há parcela vencida ou quando não encontrou o contrato.</p>
+        <ul>
+          <li>Status automático: em dia, falta pagamento, não identificado</li>
+          <li>O que não foi marcado no dia sobe em vermelho no dia seguinte</li>
+          <li>Produtividade por editor: ADs, demandas, alterações e clientes</li>
+        </ul>
+      </div>
+      <div class="shot-pair">
+        <figure class="shot" data-full="img/05-financeiro-entregas.jpg"><img src="img/05-financeiro-entregas.jpg" width="1862" height="942" loading="lazy" alt="Conferência financeira das entregas pendentes"></figure>
+        <figure class="shot" data-full="img/06-financeiro-produtividade.jpg"><img src="img/06-financeiro-produtividade.jpg" width="1878" height="937" loading="lazy" alt="Produtividade semanal por editor"></figure>
+      </div>
+    </article>
+
+    <article class="module flip reveal">
+      <div class="m-text">
+        <div class="m-num">06 · BASE DE CONHECIMENTO</div>
+        <h3>Treinamento que não depende de ninguém</h3>
+        <p>As mensagens padrão de cada etapa do atendimento, com campos que a pessoa só troca pelos dados do cliente e saudação que se ajusta sozinha ao horário. Junto, a rotina do dia do pós-venda passo a passo.</p>
+        <ul>
+          <li>Mensagens prontas organizadas por etapa do projeto</li>
+          <li>Rotina diária com o "por que importa" de cada bloco</li>
+        </ul>
+      </div>
+      <div class="shot-pair">
+        <figure class="shot" data-full="img/07-base-processo.jpg"><img src="img/07-base-processo.jpg" width="1864" height="936" loading="lazy" alt="Base de conhecimento com cards das etapas do processo"></figure>
+        <figure class="shot" data-full="img/08-base-suporte.jpg"><img src="img/08-base-suporte.jpg" width="1856" height="928" loading="lazy" alt="Rotina do dia do pós-venda em linha do tempo"></figure>
+      </div>
+    </article>
+
+    <article class="module reveal">
+      <div class="m-text">
+        <div class="m-num">07 · USUÁRIOS</div>
+        <h3>Cada um vê só o que precisa</h3>
+        <p>Login individual por colaborador e permissões por tela. O editor vê só a área de entrega, o atendimento vê clientes e processos, o admin vê tudo.</p>
+        <ul>
+          <li>Permissões granulares por tela</li>
+          <li>Registro do último acesso de cada pessoa</li>
+        </ul>
+      </div>
+      <figure class="shot" data-full="img/09-usuarios.jpg"><img src="img/09-usuarios.jpg" width="1867" height="937" loading="lazy" alt="Gestão de usuários e acessos com permissões por tela"></figure>
+    </article>
+
+    <div class="reveal">
+      <div class="stack">
+        <span>Painel web responsivo</span><span>API do ClickUp</span><span>API do Frame.io</span><span>Notion</span><span>Exportação CSV e PDF</span><span>Controle de acesso por perfil</span>
+      </div>
+      <p class="note">🔒 Por ser um sistema interno com dados reais, e-mails, sobrenomes, valores e links aparecem censurados nas imagens.</p>
+    </div>
+  </section>
+
+</main>
+
+<section class="cta">
+  <div class="wrap">
+    <h2 class="hl">Sua empresa também<br><span class="pk">vive em 10 abas?</span></h2>
+    <p>Eu construo sistemas sob medida que juntam suas ferramentas, automatizam o que é repetitivo e mostram o que importa num painel só.</p>
+    <a href="/#contact" class="btn">Quero um sistema assim →</a><a href="/#portfolio" class="btn ghost">Ver outros projetos</a>
+  </div>
+</section>
+
+<footer>© Marcelo Augusto · Desenvolvimento web e sistemas sob medida</footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Imagem ampliada"><button type="button" aria-label="Fechar">×</button><img alt=""></div>
+
+<script>
+(function(){
+  var lb=document.getElementById('lb'), lbImg=lb.querySelector('img');
+  document.querySelectorAll('[data-full]').forEach(function(el){
+    el.addEventListener('click',function(){
+      lbImg.src=el.getAttribute('data-full');
+      lbImg.alt=(el.querySelector('img')||{}).alt||'';
+      lb.classList.add('open');
+    });
+  });
+  function close(){lb.classList.remove('open');}
+  lb.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});
+    },{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('in');});
+  }
+})();
+</script>
+</body>
+</html>
