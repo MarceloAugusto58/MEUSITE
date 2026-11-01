@@ -12,6 +12,8 @@
 <meta property="og:description" content="Um SaaS interno que automatiza e organiza a operação inteira de uma agência: do primeiro contato ao pagamento.">
 <meta property="og:image" content="https://marceloaugustosites.com.br/hdcpy/img/05-financeiro-entregas.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" hreflang="pt-BR" href="https://marceloaugustosites.com.br/hdcpy">
+<link rel="alternate" hreflang="en" href="https://marceloaugustosites.com.br/hdcpy/en">
 <link rel="icon" type="image/png" href="/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +31,9 @@
   --radius: 16px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+html.lenis,html.lenis body{height:auto;}
+.lenis.lenis-smooth{scroll-behavior:auto!important;}
+.lenis.lenis-stopped{overflow:hidden;}
 body{background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
 img{display:block;max-width:100%;height:auto;}
 .intro>*,.module>*,.shot-pair>*{min-width:0;}
@@ -39,6 +43,9 @@ nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-con
 .nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;text-decoration:none;}
 .nav-back{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.18);padding:10px 20px;font-size:12px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;text-decoration:none;transition:border-color .2s,background .2s;}
 .nav-back:hover{border-color:var(--pink);background:var(--pink-dim);}
+.nav-r{display:flex;align-items:center;gap:10px;}
+.nav-lang{font-size:12px;font-weight:700;letter-spacing:1.8px;text-decoration:none;color:var(--muted);padding:10px 8px;transition:color .2s;}
+.nav-lang:hover{color:var(--white);}
 
 .wrap{max-width:1180px;margin:0 auto;padding:0 48px;}
 .pill{display:inline-block;border:1px solid rgba(247,45,122,.35);background:var(--pink-dim);color:var(--pink);font-size:11px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;padding:7px 16px;border-radius:999px;margin-bottom:22px;}
@@ -62,6 +69,13 @@ nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-con
 .stat{background:var(--bg);padding:30px 24px;text-align:center;}
 .stat b{display:block;font-family:'Barlow Condensed',sans-serif;font-size:50px;font-weight:900;line-height:1;margin-bottom:6px;}
 .stat span{font-size:13px;color:var(--muted);}
+
+/* resultados */
+.results{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:36px;}
+.res{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:30px 28px;}
+.res b{display:block;font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:900;line-height:1;color:var(--pink);margin-bottom:6px;}
+.res small{display:block;font-size:11px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.res p{color:#b6bdd0;font-size:15px;}
 
 /* contexto */
 .section{padding:110px 0 0;}
@@ -118,11 +132,18 @@ footer{padding:30px 48px;text-align:center;font-size:13px;color:var(--muted);bor
   .intro,.module,.module.flip{grid-template-columns:1fr;gap:30px;}
   .module.flip .m-text{order:0;}
   .stats{grid-template-columns:repeat(2,1fr);}
+  .results{grid-template-columns:1fr;}
 }
 @media (max-width:600px){
   nav{padding:14px 16px;gap:12px;}
   .nav-logo{font-size:17px;white-space:nowrap;}
-  .nav-back{padding:9px 14px;font-size:11px;}
+  .nav-back{padding:9px 12px;font-size:11px;}
+  .nav-r{gap:4px;}
+  .nav-back .long{display:none;}
+  .stat{padding:24px 12px;}
+  .stat b{font-size:34px;}
+  .res{padding:24px 20px;}
+  .res b{font-size:38px;}
   .wrap{padding:0 16px;}
   .hero{padding:70px 0 50px;}
   .hero h1{font-size:46px;}
@@ -132,7 +153,6 @@ footer{padding:30px 48px;text-align:center;font-size:13px;color:var(--muted);bor
   .section h2,.cta h2{font-size:38px;}
   .m-text h3{font-size:32px;}
   .module{padding:50px 0;}
-  .stat b{font-size:40px;}
   .btn.ghost{margin:12px 0 0;}
   footer{padding:24px 16px;}
 }
@@ -142,7 +162,10 @@ footer{padding:30px 48px;text-align:center;font-size:13px;color:var(--muted);bor
 
 <nav>
   <a href="/" class="nav-logo">MARCELO AUGUSTO</a>
-  <a href="/#portfolio" class="nav-back">← Voltar ao portfólio</a>
+  <div class="nav-r">
+    <a href="/hdcpy/en" class="nav-lang" hreflang="en" lang="en" aria-label="Read in English">EN</a>
+    <a href="/#portfolio" class="nav-back">← <span class="long">Voltar ao&nbsp;</span>portfólio</a>
+  </div>
 </nav>
 
 <header class="hero">
@@ -155,10 +178,10 @@ footer{padding:30px 48px;text-align:center;font-size:13px;color:var(--muted);bor
       <img src="/hdcpy/img/05-financeiro-entregas.jpg" width="1862" height="942" alt="Tela de conferência de entregas do Nexus, com cards de cada entrega pendente e botões para marcar como pago ou não pago">
     </figure>
     <div class="stats reveal">
-      <div class="stat"><b>9</b><span>módulos integrados</span></div>
-      <div class="stat"><b>4</b><span>ferramentas conectadas<br>(ClickUp, Frame.io, Notion, planilhas)</span></div>
-      <div class="stat"><b>3</b><span>perfis de acesso<br>(admin, atendimento, editor)</span></div>
-      <div class="stat"><b>1</b><span>lugar só para<br>a equipe trabalhar</span></div>
+      <div class="stat"><b>−92%</b><span>no tempo de cada atendimento<br>(de 2 horas para 10 minutos)</span></div>
+      <div class="stat"><b>3d → 1h</b><span>para produzir um produto<br>com IA + revisão humana</span></div>
+      <div class="stat"><b>3</b><span>setores automatizados<br>(comercial, pós-vendas, adm.)</span></div>
+      <div class="stat"><b>9</b><span>módulos em um<br>só painel</span></div>
     </div>
   </div>
 </header>
@@ -179,6 +202,17 @@ footer{padding:30px 48px;text-align:center;font-size:13px;color:var(--muted);bor
         <li>Nenhuma visão de produtividade por editor ou por atendente</li>
         <li>Treinamento de quem entra dependendo de alguém explicar tudo de novo</li>
       </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="pill reveal">Resultados</div>
+    <h2 class="hl reveal">O que mudou<br><span class="pk">na operação</span></h2>
+    <div class="results">
+      <div class="res reveal"><b>2h → 10 min</b><small>Por atendimento · −92%</small><p>O SaaS interno de atendimento ao cliente reduziu o tempo de cada atendimento de 2 horas para 10 minutos.</p></div>
+      <div class="res reveal"><b>3 dias → 1h</b><small>IA + revisão humana</small><p>Um sistema que combina IA e revisão humana reduziu a produção de um dos produtos vendidos pela empresa de 3 dias para 1 hora.</p></div>
+      <div class="res reveal"><b>Relatórios automáticos</b><small>Pipelines e desempenho</small><p>Registro de pipelines e relatórios de desempenho da equipe, de avanço por etapa e de entrega dos produtos gerados sozinhos.</p></div>
+      <div class="res reveal"><b>3 setores</b><small>Comercial · Pós-vendas · Administrativo</small><p>Automações que integram ClickUp, DataCrazy e Google Agenda, sem ninguém copiando dado de um lugar para outro.</p></div>
     </div>
   </section>
 
@@ -289,7 +323,7 @@ footer{padding:30px 48px;text-align:center;font-size:13px;color:var(--muted);bor
 
     <div class="reveal">
       <div class="stack">
-        <span>Painel web responsivo</span><span>API do ClickUp</span><span>API do Frame.io</span><span>Notion</span><span>Exportação CSV e PDF</span><span>Controle de acesso por perfil</span>
+        <span>Painel web responsivo</span><span>API do ClickUp</span><span>DataCrazy</span><span>Google Agenda</span><span>API do Frame.io</span><span>Notion</span><span>IA + revisão humana</span><span>Exportação CSV e PDF</span><span>Controle de acesso por perfil</span>
       </div>
       <p class="note">🔒 Por ser um sistema interno com dados reais, e-mails, sobrenomes, valores e links aparecem censurados nas imagens.</p>
     </div>
@@ -309,17 +343,26 @@ footer{padding:30px 48px;text-align:center;font-size:13px;color:var(--muted);bor
 
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Imagem ampliada"><button type="button" aria-label="Fechar">×</button><img alt=""></div>
 
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
 (function(){
+  // scroll suave (desligado para quem pede menos movimento)
+  var lenis=null;
+  if(window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+    lenis=new Lenis({duration:1.15,smoothWheel:true});
+    (function raf(t){lenis.raf(t);requestAnimationFrame(raf);})(performance.now());
+  }
+
   var lb=document.getElementById('lb'), lbImg=lb.querySelector('img');
   document.querySelectorAll('[data-full]').forEach(function(el){
     el.addEventListener('click',function(){
       lbImg.src=el.getAttribute('data-full');
       lbImg.alt=(el.querySelector('img')||{}).alt||'';
       lb.classList.add('open');
+      if(lenis)lenis.stop();
     });
   });
-  function close(){lb.classList.remove('open');}
+  function close(){lb.classList.remove('open');if(lenis)lenis.start();}
   lb.addEventListener('click',close);
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
 

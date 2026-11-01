@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus · Hard Copy | Marcelo Augusto</title>
+<meta name="description" content="Nexus: a custom internal system built for Hard Copy that brings clients, customer service, projects, deliveries, finance and team training into one place.">
+<link rel="canonical" href="https://marceloaugustosites.com.br/hdcpy/en">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://marceloaugustosites.com.br/hdcpy/en">
+<meta property="og:title" content="Nexus · Hard Copy operations platform">
+<meta property="og:description" content="An internal SaaS that organizes and automates an entire agency operation, from first contact to payment.">
+<meta property="og:image" content="https://marceloaugustosites.com.br/hdcpy/img/05-financeiro-entregas.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" hreflang="pt-BR" href="https://marceloaugustosites.com.br/hdcpy">
+<link rel="alternate" hreflang="en" href="https://marceloaugustosites.com.br/hdcpy/en">
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b10;
+  --bg-card: #0f1420;
+  --pink: #f72d7a;
+  --pink-dim: rgba(247,45,122,0.12);
+  --cyan: #00d4e8;
+  --white: #eef2ff;
+  --muted: #7a8499;
+  --border: rgba(255,255,255,0.07);
+  --radius: 16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html.lenis,html.lenis body{height:auto;}
+.lenis.lenis-smooth{scroll-behavior:auto!important;}
+.lenis.lenis-stopped{overflow:hidden;}
+body{background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+img{display:block;max-width:100%;height:auto;}
+.intro>*,.module>*,.shot-pair>*{min-width:0;}
+a{color:inherit;}
+
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(8,11,16,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;text-decoration:none;}
+.nav-back{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.18);padding:10px 20px;font-size:12px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;text-decoration:none;transition:border-color .2s,background .2s;}
+.nav-back:hover{border-color:var(--pink);background:var(--pink-dim);}
+.nav-r{display:flex;align-items:center;gap:10px;}
+.nav-lang{font-size:12px;font-weight:700;letter-spacing:1.8px;text-decoration:none;color:var(--muted);padding:10px 8px;transition:color .2s;}
+.nav-lang:hover{color:var(--white);}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 48px;}
+.pill{display:inline-block;border:1px solid rgba(247,45,122,.35);background:var(--pink-dim);color:var(--pink);font-size:11px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;padding:7px 16px;border-radius:999px;margin-bottom:22px;}
+.hl{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;line-height:.98;}
+.pk{color:var(--pink);}
+.muted{color:var(--muted);}
+
+/* hero */
+.hero{position:relative;padding:110px 0 70px;overflow:hidden;}
+.hero::before{content:"";position:absolute;inset:-30% -10% auto;height:620px;background:radial-gradient(ellipse at 50% 30%,rgba(247,45,122,.22),transparent 60%),radial-gradient(ellipse at 80% 10%,rgba(124,58,237,.18),transparent 55%);pointer-events:none;}
+.hero .wrap{position:relative;text-align:center;}
+.hero h1{font-size:92px;margin-bottom:26px;}
+.hero p.lead{max-width:720px;margin:0 auto;font-size:19px;color:#b6bdd0;}
+.hero-shot{position:relative;margin-top:64px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 40px 120px -30px rgba(247,45,122,.45),0 0 0 1px rgba(247,45,122,.08);cursor:zoom-in;}
+.chrome{display:flex;gap:7px;padding:12px 14px;background:#0c0f17;border-bottom:1px solid var(--border);}
+.chrome i{width:11px;height:11px;border-radius:50%;background:#2a2f3c;}
+.chrome i:nth-child(1){background:#ff5f57;}.chrome i:nth-child(2){background:#febc2e;}.chrome i:nth-child(3){background:#28c840;}
+
+/* números */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:20px 0 0;}
+.stat{background:var(--bg);padding:30px 24px;text-align:center;}
+.stat b{display:block;font-family:'Barlow Condensed',sans-serif;font-size:50px;font-weight:900;line-height:1;margin-bottom:6px;}
+.stat span{font-size:13px;color:var(--muted);}
+
+/* resultados */
+.results{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:36px;}
+.res{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:30px 28px;}
+.res b{display:block;font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:900;line-height:1;color:var(--pink);margin-bottom:6px;}
+.res small{display:block;font-size:11px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.res p{color:#b6bdd0;font-size:15px;}
+
+/* contexto */
+.section{padding:110px 0 0;}
+.section h2{font-size:60px;margin-bottom:20px;}
+.intro{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+.intro p{color:#b6bdd0;margin-bottom:16px;}
+.problems{list-style:none;display:grid;gap:12px;}
+.problems li{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;font-size:15px;}
+.problems li::before{content:"";flex-shrink:0;width:8px;height:8px;margin-top:8px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px var(--pink);}
+
+/* módulos */
+.module{display:grid;grid-template-columns:5fr 7fr;gap:56px;align-items:center;padding:70px 0;border-top:1px solid var(--border);}
+.module:first-of-type{border-top:0;}
+.module.flip{grid-template-columns:7fr 5fr;}
+.module.flip .m-text{order:2;}
+.m-num{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:3px;color:var(--pink);margin-bottom:10px;}
+.m-text h3{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:16px;}
+.m-text p{color:#b6bdd0;margin-bottom:18px;}
+.m-text ul{list-style:none;display:grid;gap:9px;}
+.m-text li{font-size:15px;padding-left:22px;position:relative;}
+.m-text li::before{content:"→";position:absolute;left:0;color:var(--pink);}
+.shot{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:#0c0f17;cursor:zoom-in;transition:transform .35s ease,box-shadow .35s ease;box-shadow:0 30px 80px -40px rgba(0,0,0,.9);}
+.shot:hover{transform:translateY(-4px);box-shadow:0 34px 90px -36px rgba(247,45,122,.5);}
+.shot-pair{display:grid;gap:18px;}
+
+/* stack */
+.stack{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;}
+.stack span{border:1px solid var(--border);background:rgba(255,255,255,.03);border-radius:999px;padding:8px 16px;font-size:13px;color:#c8cee0;}
+
+.note{display:flex;gap:12px;align-items:flex-start;margin-top:28px;padding:16px 18px;border-radius:12px;border:1px solid rgba(254,188,46,.25);background:rgba(254,188,46,.06);font-size:14px;color:#e8d9b0;}
+
+/* cta */
+.cta{margin:120px 0 0;padding:90px 0;text-align:center;border-top:1px solid var(--border);background:radial-gradient(ellipse at 50% 0%,rgba(247,45,122,.14),transparent 60%);}
+.cta h2{font-size:64px;margin-bottom:18px;}
+.cta p{max-width:620px;margin:0 auto 34px;color:#b6bdd0;}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--pink);color:#fff;padding:16px 32px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:filter .2s,transform .2s;}
+.btn:hover{filter:brightness(1.1);transform:translateY(-2px);}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.2);margin-left:10px;}
+footer{padding:30px 48px;text-align:center;font-size:13px;color:var(--muted);border-top:1px solid var(--border);}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(4,6,10,.94);cursor:zoom-out;}
+.lb.open{display:flex;}
+.lb img{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 30px 120px rgba(0,0,0,.8);}
+.lb button{position:absolute;top:16px;right:20px;background:none;border:0;color:#fff;font-size:34px;line-height:1;cursor:pointer;}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.in{opacity:1;transform:none;}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}.shot{transition:none;}}
+
+@media (max-width:960px){
+  .hero h1{font-size:64px;}
+  .section h2,.cta h2{font-size:46px;}
+  .intro,.module,.module.flip{grid-template-columns:1fr;gap:30px;}
+  .module.flip .m-text{order:0;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .results{grid-template-columns:1fr;}
+}
+@media (max-width:600px){
+  nav{padding:14px 16px;gap:12px;}
+  .nav-logo{font-size:17px;white-space:nowrap;}
+  .nav-back{padding:9px 12px;font-size:11px;}
+  .nav-r{gap:4px;}
+  .nav-back .long{display:none;}
+  .stat{padding:24px 12px;}
+  .stat b{font-size:34px;}
+  .res{padding:24px 20px;}
+  .res b{font-size:38px;}
+  .wrap{padding:0 16px;}
+  .hero{padding:70px 0 50px;}
+  .hero h1{font-size:46px;}
+  .hero p.lead{font-size:17px;}
+  .hero-shot{margin-top:40px;}
+  .section{padding:80px 0 0;}
+  .section h2,.cta h2{font-size:38px;}
+  .m-text h3{font-size:32px;}
+  .module{padding:50px 0;}
+  .btn.ghost{margin:12px 0 0;}
+  footer{padding:24px 16px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">MARCELO AUGUSTO</a>
+  <div class="nav-r">
+    <a href="/hdcpy" class="nav-lang" hreflang="pt-BR" lang="pt-BR" aria-label="Ler em português">PT</a>
+    <a href="/#portfolio" class="nav-back">← <span class="long">Back to&nbsp;</span>portfolio</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="pill">Case study · Custom system</div>
+    <h1 class="hl">Nexus<br><span class="pk">The brain of Hard Copy</span></h1>
+    <p class="lead">An internal SaaS I built for Hard Copy, an ad creative and copywriting agency, to organize and automate its entire operation, from the first client contact to payment reconciliation.</p>
+    <figure class="hero-shot reveal" data-full="/hdcpy/img/05-financeiro-entregas.jpg">
+      <div class="chrome"><i></i><i></i><i></i></div>
+      <img src="/hdcpy/img/05-financeiro-entregas.jpg" width="1862" height="942" alt="Nexus delivery review screen, with a card for each pending delivery and buttons to mark it as paid or unpaid">
+    </figure>
+    <div class="stats reveal">
+      <div class="stat"><b>−92%</b><span>time per customer interaction<br>(from 2 hours to 10 minutes)</span></div>
+      <div class="stat"><b>3d → 1h</b><span>to produce a product<br>with AI + human review</span></div>
+      <div class="stat"><b>3</b><span>departments automated<br>(sales, post-sales, admin)</span></div>
+      <div class="stat"><b>9</b><span>modules in a<br>single dashboard</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="intro">
+      <div class="reveal">
+        <div class="pill">The problem</div>
+        <h2 class="hl">An operation spread<br><span class="pk">across 10 tabs</span></h2>
+        <p>Hard Copy grew fast: dozens of active clients, a post-sales team, editors delivering creatives every week and a finance team checking contracts.</p>
+        <p>All of it lived scattered across ClickUp, Frame.io, Notion, spreadsheets and WhatsApp groups. Answering "has this client paid yet?" meant opening four different tools.</p>
+      </div>
+      <ul class="problems reveal">
+        <li>Onboarding forms got lost, with no way to know who had filled in what</li>
+        <li>Deliveries sent to clients before finance confirmed the contract was paid</li>
+        <li>No view of productivity per editor or per account manager</li>
+        <li>Onboarding new hires depended on someone explaining everything again</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="pill reveal">Results</div>
+    <h2 class="hl reveal">What changed<br><span class="pk">in the operation</span></h2>
+    <div class="results">
+      <div class="res reveal"><b>2h → 10 min</b><small>Per interaction · −92%</small><p>The internal customer service SaaS cut the time spent on each customer interaction from 2 hours to 10 minutes.</p></div>
+      <div class="res reveal"><b>3 days → 1h</b><small>AI + human review</small><p>A system combining AI with human review cut production time for one of the company's products from 3 days to 1 hour.</p></div>
+      <div class="res reveal"><b>Automatic reports</b><small>Pipelines and performance</small><p>Pipeline tracking plus reports on team performance, stage-by-stage progress and product delivery, all generated automatically.</p></div>
+      <div class="res reveal"><b>3 departments</b><small>Sales · Post-sales · Admin</small><p>Automations connecting ClickUp, DataCrazy and Google Calendar, so nobody copies data from one place to another by hand.</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="modules">
+    <div class="pill reveal">The solution</div>
+    <h2 class="hl reveal">One module for<br><span class="pk">each part of the operation</span></h2>
+
+    <article class="module reveal">
+      <div class="m-text">
+        <div class="m-num">01 · CLIENTS</div>
+        <h3>Instant client search</h3>
+        <p>Type a name or email and the system instantly shows every form that client has filled in. New submissions sync on their own.</p>
+        <ul>
+          <li>Real-time search as you type</li>
+          <li>Automatic form syncing</li>
+        </ul>
+      </div>
+      <figure class="shot" data-full="/hdcpy/img/01-buscar-cliente.jpg"><img src="/hdcpy/img/01-buscar-cliente.jpg" width="1877" height="931" loading="lazy" alt="Client search screen with a search field for email or name"></figure>
+    </article>
+
+    <article class="module flip reveal">
+      <div class="m-text">
+        <div class="m-num">02 · CUSTOMER SERVICE</div>
+        <h3>Post-sales team report</h3>
+        <p>How many clients each team member contacted, how many new clients came in and who still has pending items for the day. Filter by today, yesterday, 7 days or month, and export to CSV.</p>
+        <ul>
+          <li>Key metrics for the period up top</li>
+          <li>Per-person table with last activity</li>
+          <li>One-click spreadsheet export</li>
+        </ul>
+      </div>
+      <figure class="shot" data-full="/hdcpy/img/02-relatorio-atendimentos.jpg"><img src="/hdcpy/img/02-relatorio-atendimentos.jpg" width="1859" height="930" loading="lazy" alt="Customer service report with summary cards and a table per team member"></figure>
+    </article>
+
+    <article class="module reveal">
+      <div class="m-text">
+        <div class="m-num">03 · PROJECT MANAGEMENT</div>
+        <h3>ClickUp summed up in charts</h3>
+        <p>Nexus reads the ClickUp API and shows what changed over the last 7 days and how many tasks each person moved today, with a PDF ready for the meeting.</p>
+        <ul>
+          <li>Direct ClickUp API integration</li>
+          <li>Daily chart and per-person ranking</li>
+          <li>PDF report generated on the spot</li>
+        </ul>
+      </div>
+      <figure class="shot" data-full="/hdcpy/img/03-gestao-de-projeto.jpg"><img src="/hdcpy/img/03-gestao-de-projeto.jpg" width="1862" height="933" loading="lazy" alt="ClickUp activity with bar charts per day and per assignee"></figure>
+    </article>
+
+    <article class="module flip reveal">
+      <div class="m-text">
+        <div class="m-num">04 · DELIVERIES</div>
+        <h3>The editor uploads, the system organizes</h3>
+        <p>The editor enters the client code and drops in the videos. Nexus files everything in the right Frame.io project and notifies finance to check payment before anything is released to the client.</p>
+        <ul>
+          <li>Direct upload to Frame.io via API</li>
+          <li>Final videos kept apart from editable files</li>
+          <li>Field validation before delivery</li>
+        </ul>
+      </div>
+      <figure class="shot" data-full="/hdcpy/img/04-subir-entrega.jpg"><img src="/hdcpy/img/04-subir-entrega.jpg" width="1873" height="936" loading="lazy" alt="Upload delivery screen with a form and a drop zone for videos"></figure>
+    </article>
+
+    <article class="module reveal">
+      <div class="m-text">
+        <div class="m-num">05 · FINANCE</div>
+        <h3>No delivery goes out without a payment check</h3>
+        <p>Each delivery becomes a card showing the contract, what has been paid and what is still owed. The system cross-checks the data and flags overdue installments or missing contracts on its own.</p>
+        <ul>
+          <li>Automatic status: paid up, payment due, not identified</li>
+          <li>Anything left unchecked turns red the next day</li>
+          <li>Productivity per editor: ads, requests, revisions and clients</li>
+        </ul>
+      </div>
+      <div class="shot-pair">
+        <figure class="shot" data-full="/hdcpy/img/05-financeiro-entregas.jpg"><img src="/hdcpy/img/05-financeiro-entregas.jpg" width="1862" height="942" loading="lazy" alt="Finance review of pending deliveries"></figure>
+        <figure class="shot" data-full="/hdcpy/img/06-financeiro-produtividade.jpg"><img src="/hdcpy/img/06-financeiro-produtividade.jpg" width="1878" height="937" loading="lazy" alt="Weekly productivity per editor"></figure>
+      </div>
+    </article>
+
+    <article class="module flip reveal">
+      <div class="m-text">
+        <div class="m-num">06 · KNOWLEDGE BASE</div>
+        <h3>Training that doesn't depend on anyone</h3>
+        <p>Template messages for every stage of client service, with placeholders you just swap for the client's details and a greeting that adjusts to the time of day. Plus the post-sales daily routine, step by step.</p>
+        <ul>
+          <li>Ready-made messages organized by project stage</li>
+          <li>Daily routine with the "why it matters" for each block</li>
+        </ul>
+      </div>
+      <div class="shot-pair">
+        <figure class="shot" data-full="/hdcpy/img/07-base-processo.jpg"><img src="/hdcpy/img/07-base-processo.jpg" width="1864" height="936" loading="lazy" alt="Knowledge base with cards for each process stage"></figure>
+        <figure class="shot" data-full="/hdcpy/img/08-base-suporte.jpg"><img src="/hdcpy/img/08-base-suporte.jpg" width="1856" height="928" loading="lazy" alt="Post-sales daily routine shown as a timeline"></figure>
+      </div>
+    </article>
+
+    <article class="module reveal">
+      <div class="m-text">
+        <div class="m-num">07 · USERS</div>
+        <h3>Everyone sees only what they need</h3>
+        <p>Individual logins for every team member and per-screen permissions. Editors only see the delivery area, customer service sees clients and processes, admins see everything.</p>
+        <ul>
+          <li>Granular per-screen permissions</li>
+          <li>Last-access log for every user</li>
+        </ul>
+      </div>
+      <figure class="shot" data-full="/hdcpy/img/09-usuarios.jpg"><img src="/hdcpy/img/09-usuarios.jpg" width="1867" height="937" loading="lazy" alt="User and access management with per-screen permissions"></figure>
+    </article>
+
+    <div class="reveal">
+      <div class="stack">
+        <span>Responsive web dashboard</span><span>ClickUp API</span><span>DataCrazy</span><span>Google Calendar</span><span>Frame.io API</span><span>Notion</span><span>AI + human review</span><span>CSV and PDF export</span><span>Role-based access control</span>
+      </div>
+      <p class="note">🔒 Since this is an internal system with real data, emails, last names, amounts and links are blurred in the screenshots. The interface itself is in Portuguese.</p>
+    </div>
+  </section>
+
+</main>
+
+<section class="cta">
+  <div class="wrap">
+    <h2 class="hl">Does your company also<br><span class="pk">live in 10 tabs?</span></h2>
+    <p>I build custom systems that connect your tools, automate the repetitive work and put what matters in a single dashboard.</p>
+    <a href="/#contact" class="btn">I want a system like this →</a><a href="/#portfolio" class="btn ghost">See other projects</a>
+  </div>
+</section>
+
+<footer>© Marcelo Augusto · Web development and custom systems</footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Enlarged image"><button type="button" aria-label="Close">×</button><img alt=""></div>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(function(){
+  // smooth scroll (off for users who prefer reduced motion)
+  var lenis=null;
+  if(window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+    lenis=new Lenis({duration:1.15,smoothWheel:true});
+    (function raf(t){lenis.raf(t);requestAnimationFrame(raf);})(performance.now());
+  }
+
+  var lb=document.getElementById('lb'), lbImg=lb.querySelector('img');
+  document.querySelectorAll('[data-full]').forEach(function(el){
+    el.addEventListener('click',function(){
+      lbImg.src=el.getAttribute('data-full');
+      lbImg.alt=(el.querySelector('img')||{}).alt||'';
+      lb.classList.add('open');
+      if(lenis)lenis.stop();
+    });
+  });
+  function close(){lb.classList.remove('open');if(lenis)lenis.start();}
+  lb.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});
+    },{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('in');});
+  }
+})();
+</script>
+</body>
+</html>
